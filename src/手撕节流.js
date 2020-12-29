@@ -97,7 +97,7 @@ function throttle3(callback,wait) {
     }
     return throttled
 }
-throttle3(test,1000)()
+
 /**
  * 第四版
  * 
@@ -125,7 +125,7 @@ function throttle4(callback,wait,options) {
         now = new Date().getTime();;
         remaining = wait - (now - previous); // 下次触发 callback 剩余的时间
         if (!previous && options.leading === false) previous = now;
-        var remaining = wait - (now - previous);
+        remaining = wait - (now - previous);
         if (remaining <= 0 || remaining > wait) { // 没有剩余时间了
             if (timer) {
                 clearTimeout(timer);

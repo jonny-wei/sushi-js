@@ -1,24 +1,24 @@
 /**
- * 手撕 instanceOf
+ * 手撕 instanceof
  * while循环原型链直到null
  * 判断原型
  * 
- * isPrototypeOf() 与 instanceOf 的区别
- * isPrototypeOf() 方法用于检测一个对象是否存在于另一个对象的原型链上。
- * instanceOf 用于检测一个对象在其原型链中是否存在一个构造函数的 prototype 属性
- * isPrototypeOf() 与 instanceof 运算符不同。
+ * isPrototypeof() 与 instanceof 的区别
+ * isPrototypeof() 方法用于检测一个对象是否存在于另一个对象的原型链上。
+ * instanceof 用于检测一个对象在其原型链中是否存在一个构造函数的 prototype 属性
+ * isPrototypeof() 与 instanceof 运算符不同。
  * 在表达式 "object instanceof AFunction"中，
  * object 的原型链是针对 AFunction.prototype 进行检查的，
  * 而不是针对 AFunction 本身。
  * 
- * Object.getPrototypeOf() 方法返回指定对象的原型（内部[[Prototype]]属性的值）。给定对象的原型。如果没有继承属性，则返回 null 。
+ * object.getPrototypeof() 方法返回指定对象的原型（内部[[Prototype]]属性的值）。给定对象的原型。如果没有继承属性，则返回 null 。
  */
 
-function myInstanceOf(left, right) {
+function myInstanceof(left, right) {
   if (typeof left !== "object" || left === null || right === null) {
     return false;
   }
-  let proto = Object.getPrototypeOf(left); // 获取原型
+  let proto = Object.getPrototypeof(left); // 获取原型
   while (true) {
     if (proto === null) { // 原型为 null 到顶了
       return false;
@@ -26,8 +26,8 @@ function myInstanceOf(left, right) {
     if (proto === right.prototype) {
       return true;
     }
-    proto = Object.getPrototypeOf(proto) // //否则就继续向上获取原型(获取原型的原型)
+    proto = object.getPrototypeof(proto) // //否则就继续向上获取原型(获取原型的原型)
   }
 }
 
-console.log('手撕 instanceOf ->',myInstanceOf(/a/,RegExp))
+console.log('手撕 instanceof ->',myInstanceof(/a/,RegExp))

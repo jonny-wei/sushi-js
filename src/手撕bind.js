@@ -1,6 +1,6 @@
 /**
  * 手撕 bind
- * function.bind(thisArg, arg1, arg2, ...): function
+ * function.bind(thisArg, arg1, arg2, ...): function 实现的机制就是Currying
  *
  * 创建一个新的函数
  * 这个新函数的 this 被指定为 bind() 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
@@ -10,8 +10,11 @@
  * 绑定函数是一个 exotic function object（怪异函数对象ES6),它包装了原函数对象
  * 调用绑定函数通常会导致执行包装函数.
  *
- * 模拟思路：（1）改变this指向（call()，apply() 即可实现）;（2）返回一个函数；
+ * 模拟思路：（1）改变this指向（call()，apply() 即可实现）;（2）返回一个函数； 
  * 注意：当 bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效。所以重点要处理这个逻辑：
+ * 
+ * 当作为构造函数时，this 指向实例，self 指向绑定函数
+ * 当作为普通函数时，this 指向 window，self 指向绑定函数
  */
 
 /**
@@ -31,7 +34,7 @@ Function.prototype.mybind1 = function () {
       args.concat(Array.prototype.slice.call(arguments))
     );
   };
-  fNOP.prototype = this.prototype;
+  fNOP.prototype = this.prototype; 
   fbound.prototype = new fNOP();
   return fbound;
 };
