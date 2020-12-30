@@ -7,6 +7,8 @@
  * Object.assign(target, ...sources)
  * Object.assign() 方法用于将所有可枚举属性的值从一个或多个源对象分配到目标对象。它将返回目标对象。
  * 源对象source覆盖目标对象target的相同属性；后面的源对象覆盖前面的源对象
+ * 
+ * 继承属性和不可枚举属性是不能拷贝的
  *
  * 该方法使用源对象的[[Get]]和目标对象的[[Set]]，所以它会调用相关 getter 和 setter。
  * 因此，它分配属性，而不仅仅是复制或定义新的属性。如果合并源包含getter，这可能使其不适合将新属性合并到原型中
@@ -27,8 +29,8 @@ Object.defineProperty(Object, "assign", {
     for (var index = 1; index < arguments.length; index++) {
       var nextSource = arguments[index];
       if (nextSource !== null && nextSource !== undefined) {
-        for (var nextKey in nextSource) {
-          // Avoid bugs when hasOwnProperty is shadowed。 hasOwnProperty判断，确保只拿到本身的属性、方法（不包含继承的）
+        for (var nextKey in nextSource) {  // for...in - key
+          // for...in 和 hasOwnProperty判断，确保只拿到本身的属性、方法（不包含继承的）
           if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
             to[nextKey] = nextSource[nextKey];
           }
