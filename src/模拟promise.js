@@ -75,8 +75,6 @@
  * （3）错误冒泡
  */
 
-const { for } = require("core-js/fn/symbol");
-
 // 定义三种状态
 const PENDING = "PENDING"; // 待定 初始状态，既没有被兑现，也没有被拒绝
 const FULFILLED = "FULFILLED"; // 已兑现

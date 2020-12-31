@@ -88,7 +88,7 @@ function deepClone2(source, hash = new WeakMap()) {
     };
   } else if (source instanceof RegExp) {
     //判断正则表达式的情况
-    target = source;
+    target = source; // new RegExp(source)
   } else if (source instanceof Date) {
     target = new Date(source);
   } else {
@@ -98,8 +98,8 @@ function deepClone2(source, hash = new WeakMap()) {
   // 将属性和拷贝后的值进行缓存
   hash.set(source, target);
   //开始做遍历递归调用
-  for (let key in source) {
-    if (source.hasOwnProperty(key)) {
+  for (let key in source) {  // for...in 和 hasOwnProperty判断，确保只拿到本身的属性、方法（不包含继承的）
+    if (source.hasOwnProperty(key)) { // 防止拷贝原型链上的属性
       target[key] = deepClone2(source[key], hash);
     }
   }
@@ -115,6 +115,7 @@ let obj = {
   f: { ff: undefined, fff: ["1", /a/, 3] },
   g: function () {},
   h: Symbol("h"),
+  i: { ii: new Date()}
 };
 let cloneObj1 = Object.assign({}, obj);
 cloneObj1.b.bb = 111;
@@ -132,5 +133,5 @@ console.log("深拷贝 ->", cloneObj3, obj);
 //结论：cloneObj3的改变不影响obj 但是不能克隆 正则类型
 
 let cloneObj4 = deepClone2(obj);
-cloneObj4.e.ee = false;
+cloneObj4.i.ii = false;
 console.log("深拷贝 ->", cloneObj4, obj);
