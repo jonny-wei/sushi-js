@@ -22,7 +22,8 @@
  * (3) 数组：Array.prototype.slice.call(arr); Array.prototype.concat.call(arr);
  *
  * 深拷贝的方式
- * (1) JSON.parse(JSON.stringify())
+ * (1) JSON.parse(JSON.stringify()) 
+ * 无法克隆函数，Symbol，RegExp，Date以及过滤了undefined。对于它不支持的数据都会直接忽略该属性。
  * (2) 深拷贝函数(用第二版)
  * (3) 浅拷贝+递归: 存在循环引用的问题,一些类型也无法拷贝
  */
@@ -99,7 +100,7 @@ function deepClone2(source, hash = new WeakMap()) {
   hash.set(source, target);
   //开始做遍历递归调用
   for (let key in source) {
-    if (source.hasOwnProperty(key)) {
+    if (source.hasOwnProperty(key)) { // 不拷贝原型链上的属性
       target[key] = deepClone2(source[key], hash);
     }
   }
@@ -132,5 +133,5 @@ console.log("深拷贝 ->", cloneObj3, obj);
 //结论：cloneObj3的改变不影响obj 但是不能克隆 正则类型
 
 let cloneObj4 = deepClone2(obj);
-cloneObj4.e.ee = false;
+cloneObj4.d.ee = false;
 console.log("深拷贝 ->", cloneObj4, obj);
