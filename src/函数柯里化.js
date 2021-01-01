@@ -35,6 +35,9 @@
  * 函数柯里化实现
  */
 function curry(fn) {
+  if(typeof fn !== 'function'){
+    throw new TypeError(fn + ' is not a function');
+  }
   let args = [].slice.call(arguments, 1);
   let _curry = function () {
     // 里面使用了 arguments 不能用箭头函数
