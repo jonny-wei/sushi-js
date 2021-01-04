@@ -40,12 +40,15 @@
  * 一旦有任何一个iterable里面的promise对象失败则立即触发该promise对象的失败。
  * 如果这个新的promise对象触发了失败状态，它会把iterable里第一个触发失败的promise对象的错误信息作为它的失败错误信息。
  *
- * Promise.allSettled(iterable)
+ * Promise.allSettled(iterable) ES2020
  * 等到所有promises都已敲定（settled）（每个promise都已兑现（fulfilled）或已拒绝（rejected））。
  * 返回一个promise，该promise在所有promise完成后完成。并带有一个对象数组，每个对象对应每个promise的结果。
+ * 当您有多个彼此不依赖的异步任务成功完成时，或者您总是想知道每个promise的结果时，通常使用它。
+ * 相比之下，Promise.all() 更适合彼此相互依赖或者在其中任何一个reject时立即结束。
  *
- * Promise.any(iterable) 一个成功即返回
+ * Promise.any(iterable) 一个成功即返回 ES2021
  * 接收一个Promise对象的集合，当其中的一个 promise 成功，就返回那个成功的promise的值。
+ * 本质上，这个方法和Promise.all()是相反的。
  *
  * Promise.race(iterable)
  * 当iterable参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情
