@@ -12,6 +12,9 @@
  * 而不是针对 AFunction 本身。
  * 
  * object.getPrototypeof() 方法返回指定对象的原型（内部[[Prototype]]属性的值）。给定对象的原型。如果没有继承属性，则返回 null 。
+ * 
+ * instanceof能否判断基本数据类型？
+ * 能。但需要手动实现。将原有的instanceof方法重定义。
  */
 
 function myInstanceof(left, right) {

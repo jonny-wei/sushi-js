@@ -49,6 +49,7 @@ console.log("可靠的数据类型检查 ->", checkType(arr));
  * console.log(1 + true) // +是算术运算符,true被Number(true)->1,打印出2
  * console.log(1 + undefined) // 1 + Number(undefined) -> 1 + NaN, 打印NaN
  * console.log(1 + null) // 1 + Number(null) -> 1 + 0,打印出1
+ * [] == ![] // true  [] -> 0; ![] -> false -> 0 -->  0 == 0 true
  * (2)与=== 运算也不相同。 
  * === 运算符 (也包括 == 运算符) 将数字 -0 和 +0 视为相等 ，而将Number.NaN 与NaN视为不相等.
  * Object.is([], []);           // false
