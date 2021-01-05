@@ -65,10 +65,10 @@ function debounce3(callback, wait, immediate) {
     clearTimeout(timer);
     if (immediate) {
       const callNow = !timer; // 如果已经执行过，不再执行
-      timeout = setTimeout(function () {
-        timeout = null;
+      timer = setTimeout(function () {
+        timer = null;
       }, wait);
-      if (callNow) func.apply(context, args); // 第一次首次触发 立刻执行
+      if (callNow) callback.apply(context, arguments); // 第一次首次触发 立刻执行
     } else {
       timer = setTimeout(() => {
         callback.apply(this, arguments); // args: 是类数组 用apply()
