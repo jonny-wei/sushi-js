@@ -104,7 +104,7 @@ class Promise {
     };
 
     const reject = (reason) => {
-      if (this.status === REJECTED) {
+      if (this.status === PENDING) {
         this.status = REJECTED;
         this.reason = reason;
         this.onRegectedCallbacks.forEach((fn) => fn(this.reason));
