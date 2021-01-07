@@ -17,7 +17,7 @@ const jsonp = ({ url, params, callbackName }) => {
   return new Promise((resolve, reject) => {
     const scriptEle = document.createElement("script");
     scriptEle.src = generateUrl();
-    scriptEle.body.appendChild(scriptEle);
+    document.body.appendChild(scriptEle);
     window[callbackName] = (data) => {
       resolve(data);
       document.removeChild(scriptEle);
