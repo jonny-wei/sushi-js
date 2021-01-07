@@ -71,7 +71,7 @@ function debounce3(callback, wait, immediate) {
       if (callNow) callback.apply(context, arguments); // 第一次首次触发 立刻执行
     } else {
       timer = setTimeout(() => {
-        callback.apply(this, arguments); // args: 是类数组 用apply()
+        callback.apply(this, arguments); // arguments: 是类数组 用apply()
       }, wait);
     }
   };

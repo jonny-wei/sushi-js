@@ -109,8 +109,8 @@ function throttle3(callback,wait) {
 function throttle4(callback,wait,options) {
     let previous = 0;
     let timer = null;
-    let context = this;
-    let args = arguments;
+    let context = null;
+    let args = null;
     let now = 0;
     let remaining = 0;
     if (!options) options = {};
@@ -122,10 +122,11 @@ function throttle4(callback,wait,options) {
     };
 
     const throttled = function(){
-        now = new Date().getTime();;
-        remaining = wait - (now - previous); // 下次触发 callback 剩余的时间
+        now = new Date().getTime();
         if (!previous && options.leading === false) previous = now;
-        remaining = wait - (now - previous);
+        context = this;
+        args = arguments;
+        remaining = wait - (now - previous); // 下次触发 callback 剩余的时间
         if (remaining <= 0 || remaining > wait) { // 没有剩余时间了
             if (timer) {
                 clearTimeout(timer);

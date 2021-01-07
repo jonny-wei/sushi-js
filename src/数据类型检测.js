@@ -65,14 +65,15 @@ console.log("可靠的数据类型检查 ->", checkType(arr));
  * Object.is(NaN, 0/0);         // true
  * 
  * Object.is解决的主要是这两个问题：
- * +0 === -0  // true
- * NaN === NaN // false
+ * +0 === -0  // true 但是1/+0 = +Infinity， 1/-0 = -Infinity, 是不一样的
+ * NaN === NaN // false NaN === NaN 是 false,这是不对的
  */
 const is = (x, y) => {
   if (x === y) {
     // +0和-0应该不相等
     return x !== 0 || y !== 0 || 1/x === 1/y;
   } else {
+    // NaN和NAN是相等的
     return x !== x && y !== y;
   }
 }
