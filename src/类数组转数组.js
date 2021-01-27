@@ -1,7 +1,14 @@
 /**
  * 类数组转数组
- * 类数组与数组的qubie
- * 类数组：有length属性 但不能使用数组方法
+ * 类数组与数组的区别
+ * 类数组：用于一个 length 属性和若干索引属性的对象。
+ * 类数组对象可以进行读写，获取长度，遍历3个方面，但不能使用数组的方法。如果非要使用数组的方法可以通过 call() 函数
+ * (a) Array.prototype.slice.call(arrayLike);
+ * (b) Array.prototype.splice.call(arrayLike, 0); 
+ * (c) Array.from(arrayLike);
+ * (d) Array.prototype.concat.apply([], arrayLike)
+ * (e) ES6的 ... 运算符
+
  */
 
  const arrLike = document.querySelectorAll('div')
@@ -28,8 +35,15 @@ const transform3 = Array.prototype.slice.call(arrLike)
 console.log("方法3 ->", transform3);
 
 /**
- * 方法3
+ * 方法4
  * Array.prototype.concat.apply()
  */
 const transform4 = Array.prototype.concat.apply([],arrLike)
 console.log("方法4->", transform4);
+
+/**
+ * 方法5
+ * Array.prototype.splice.call()
+ */
+const transform5 = Array.prototype.splice.call(arrLike,0)
+console.log("方法5->", transform5);

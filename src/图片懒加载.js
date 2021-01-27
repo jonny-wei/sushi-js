@@ -14,11 +14,11 @@ function lazyload() {
     document.documentElement.scrollTop || document.body.scrollTop;
   for (let i = 0; i < len; i++) {
     const offsetHeight = imgs[i].offsetTop;
-    if (offsetHeight < viewHeigh + scrollHeigh) {
+    if (offsetHeight < viewHeigh + scrollHeigh) {  // 和滚动加载同理 clientHeight + scrollTop >= scrollHeight
       const src = imgs[i].dataset.src;
       imgs[i].src = src;
     }
   }
 }
 
-debounce(window.addEventListener("scroll", lazyload), 500);
+throttle(window.addEventListener("scroll", lazyload), 500);
