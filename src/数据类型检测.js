@@ -26,6 +26,8 @@ const arr = [
  * 标本兼治
  * 调用Object原型上的toString()方法
  * Object.prototype.toString.call(val).slice(8, -1).toLowerCase()
+ * 不推荐将这个函数用来检测可能会产生包装类型的基本数据类型上,
+ * 因为 call 始终会将第一个参数进行装箱操作，导致基本类型和包装类型无法区分
  */
 function checkType(arr) {
   const result = new Map();
