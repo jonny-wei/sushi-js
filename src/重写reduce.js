@@ -1,20 +1,23 @@
 /**
  * 重写 reduce
  *
- * reduce(callback(accumulator,currentValue,index,array),initialValue)
+ * reduce(callback(accumulator,currentValue,index,array),initialValue): Array
  * initialValue作为第一次调用 callback 函数时的第一个参数的值。
  * 如果没有提供初始值，则将使用数组中的第一个元素。
  *
  * 在没有初始值的空数组上调用 reduce 将报错。
  *
- * 返回值：函数累计处理的结果accumulator
+ * 返回值：函数累计处理的结果 accumulator
  *
  * 为数组中的每一个元素依次执行callback函数，不包括数组中被删除或从未被赋值的元素
  *
  * 如果调用reduce()时提供了initialValue，
- * accumulator取值为initialValue，currentValue取数组中的第一个值，currentValue为0；
+ * accumulator取值为initialValue，currentValue取数组中的第一个值，index为0；
+ * accumnlator = initialValue; currentValue = arr[0]; index = 0;
+ * 
  * 如果没有提供 initialValue，
- * 那么accumulator取数组中的第一个值，currentValue取数组中的第二个值, currentValue为1。
+ * 那么accumulator取数组中的第一个值，currentValue取数组中的第二个值, index为1。
+ * accumnlator = arr[k]; currentValue = arr[k+1]; index = K; (k：是为了考虑稀疏数组的情况)
  */
 Array.prototype.reduce = function (callback, initialValue) {
   if (this == undefined) {
