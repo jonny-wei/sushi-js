@@ -15,13 +15,13 @@ Array.prototype.map = function (callback, thisArg) {
   if (typeof callback !== "function") {
     throw new TypeError(callback + "is not a function");
   }
-    // 让 obj 成为回调函数的对象传递（强制转换对象）
-    const obj = Object(this);
-    // >>> 0 无符号右移位运算。保证len为number，且为正整数
-    const len = obj.length >>> 0;
+  // 让 obj 成为回调函数的对象传递（强制转换对象）
+  const obj = Object(this);
+  // >>> 0 无符号右移位运算。保证len为number，且为正整数
+  const len = obj.length >>> 0;
   for (let index = 0; index < len; index++) {
-    if(index in obj) {
-        result[index] = callback.call(thisArg, obj[index], index, obj);
+    if (index in obj) {
+      result[index] = callback.call(thisArg, obj[index], index, obj);
     }
   }
   return result;
@@ -29,7 +29,35 @@ Array.prototype.map = function (callback, thisArg) {
 
 var numbers = [1, 4, 9];
 var roots = numbers.map(Math.sqrt);
-var a = Array.prototype.map.call("Hello World", function(x) {
-    return x.charCodeAt(0);
-})
-console.log('重写map ->', roots,a)
+var a = Array.prototype.map.call("Hello World", function (x) {
+  return x.charCodeAt(0);
+});
+console.log("重写map ->", roots, a);
+
+/**
+ * 方法二
+ * for 循环
+ * 也可以用 for...in-key不需要判断 直接过滤了稀疏数组的情况
+ */
+Array.prototype.map = function (callback, thisArg) {
+  const arr = Array.prototype.slice.call(this);
+  let res = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (i in arr) {
+      // 判断稀疏数组的情况
+      res[i] = callback(thisArg, arr[i], i, this);
+    }
+  }
+  return res;
+};
+
+/**
+ * 方法三
+ * 利用 reduce
+ */
+Array.prototype.map = function (callback, thisArg) {
+  const arr = Array.prototype.slice.call(this);
+  return arr.reduce((acc, value, index) => {
+    return [...acc, callback.call(thisArg, value, index, this)];
+  }, []);
+};

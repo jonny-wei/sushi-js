@@ -1,3 +1,5 @@
+const { for, for } = require("core-js/fn/symbol");
+
 /**
  * 重写 reduce
  *
@@ -14,7 +16,7 @@
  * 如果调用reduce()时提供了initialValue，
  * accumulator取值为initialValue，currentValue取数组中的第一个值，index为0；
  * accumnlator = initialValue; currentValue = arr[0]; index = 0;
- * 
+ *
  * 如果没有提供 initialValue，
  * 那么accumulator取数组中的第一个值，currentValue取数组中的第二个值, index为1。
  * accumnlator = arr[k]; currentValue = arr[k+1]; index = K; (k：是为了考虑稀疏数组的情况)
@@ -48,6 +50,29 @@ Array.prototype.reduce = function (callback, initialValue) {
     k++;
   }
   return accumulator;
+};
+
+/**
+ * 方法二
+ */
+Array.prototype.reduce = function (callback, initialValue) {
+  let arr = Array.prototype.slice.call(this);
+  let accumulator = null;
+  let startIndex = 0;
+  if (initialValue === undefined) {
+    for (let i = 0; i < arr.length; i++) {
+      if (!arr.hasOwnProperty(i)) continue;
+      startIndex = i;
+      accumulator = arr[i];
+      break;
+    }
+  } else {
+    accumulator = initialValue;
+  }
+  for (let i = ++startIndex; i < arr.length; i++) {
+    if (!arr.hasOwnProperty(i)) continue;
+    accumulator = callback.call(null, accumulator, arr[i], i, this);
+  }
 };
 
 /**
@@ -214,14 +239,13 @@ function p4(a) {
 
 const promiseArr = [p1, p2, f3, p4];
 
-function runPromiseInSequence(arr,input) {
+function runPromiseInSequence(arr, input) {
   return arr.reduce((promiseChain, currentFunction) => {
-    console.log(promiseChain)
+    console.log(promiseChain);
     return promiseChain.then(currentFunction);
   }, Promise.resolve(input));
 }
 
-runPromiseInSequence(promiseArr,10).then((resolve,reject) => {
-    console.log("重写reduce,按顺序运行Promise ->",resolve,reject)
-})
-
+runPromiseInSequence(promiseArr, 10).then((resolve, reject) => {
+  console.log("重写reduce,按顺序运行Promise ->", resolve, reject);
+});

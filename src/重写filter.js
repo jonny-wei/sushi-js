@@ -28,6 +28,39 @@ Array.prototype.filter = function (callback, thisArg) {
   return result;
 };
 
-console.log('重写filter ->',[1,2,'3'].filter(item => {
-  return item > 1
-}))
+console.log(
+  "重写filter ->",
+  [1, 2, "3"].filter((item) => {
+    return item > 1;
+  })
+);
+
+/**
+ * 方法二
+ */
+Array.prototype.filter = function (callback, thisArg) {
+  const arr = Array.prototype.slice.call(this);
+  let res = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (i in arr) {
+      if (callback.call(thisArg, arr[i], index, this)) {
+        res.push(arr[i]);
+      }
+    }
+  }
+  return res;
+};
+
+/**
+ * 方法三
+ */
+Array.prototype.filter = function (callback, thisArg) {
+  const arr = Array.prototype.slice.call(this);
+  return arr.reduce((acc, value, index) => {
+    if (callback.call(thisArg, value, index, this)) {
+      return [...acc, value];
+    } else {
+      return [...acc];
+    }
+  }, []);
+};

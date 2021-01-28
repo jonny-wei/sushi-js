@@ -52,6 +52,23 @@ function curry(fn) {
 }
 
 /**
+ * 方法二
+ */
+function curry(fn) {
+  if(fn.length <= 1) return fn;
+  const _curry = (...args) => {
+    if(fn.length === arg.length){
+      return fn(...args)
+    }else{
+      return (...args2) => {
+        return _curry(...args,args2)
+      }
+    }
+  }
+  return _curry
+}
+
+/**
  * 实现add(1)(2)(3)(4)=10; 、 add(1)(1,2,3)(2)=9;
  *
  * 柯里化思想求和
