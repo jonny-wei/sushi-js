@@ -146,3 +146,40 @@ function debounce5(callback, wait, immediate) {
 console.log(debounce5(test, 4000, true)());
 let cancelAction = debounce5(test, 4000, true);
 cancelAction.cancel();
+
+/**
+ * 其他写法
+ * leading 为是否在进入时立即执行一次，原理是利用定时器，
+ * 如果在规定时间内再次触发事件会将上次的定时器清除，
+ * 即不会执行函数并重新设置一个新的定时器，直到超过规定时间自动触发定时器中的函数
+ * 同时通过闭包向外暴露了一个 cancel 函数，使得外部能直接清除内部的计数器
+ */
+const debounce = (
+  func,
+  time,
+  options = {
+    leading: true,
+    context: null,
+  }
+) => {
+  let timer = null;
+  const _debounce = function (...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    if (options.leading && !timer) {
+      timer = setTimeout(null, time);
+      func.apply(options.context, args);
+    } else {
+      timer = setTimeout(() => {
+        func.apply(options.context, args);
+        timer = null;
+      }, time);
+    }
+  };
+  _debounce.cancel = function () {
+    clearTimeout(timer);
+    timer = null;
+  };
+  return _debounce;
+};

@@ -27,11 +27,15 @@ function mynew1() {
  * 方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
  * 返回值：一个新对象，带着指定的原型对象和属性。
  */
+const isComplexDataType = (obj) =>
+  (typeof obj === "object" || typeof obj === "function") && obj !== null;
+
 function mynew2(myConstructor, ...args) {
   const obj = Object.create(myConstructor.prototype); // 创建一个对象，并将 obj.__proto__指向构造函数的原型myConstructor.prototype
   const result = myConstructor.apply(obj, args);
-  return typeof result === "object" ? result : obj;
+  return isComplexDataType(result) ? result : obj;
 }
+
 
 // 测试
 function Otaku(name, age) {

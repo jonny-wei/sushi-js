@@ -22,30 +22,54 @@
  * (3) 数组：Array.prototype.slice.call(arr); Array.prototype.concat.call(arr);
  *
  * 深拷贝的方式
- * (1) JSON.parse(JSON.stringify()) 
+ * (1) JSON.parse(JSON.stringify())
  * 无法克隆函数，Symbol，RegExp，Date以及过滤了undefined。对于它不支持的数据都会直接忽略该属性。
  * (2) 深拷贝函数(用第二版)
  * (3) 浅拷贝+递归: 存在循环引用的问题,一些类型也无法拷贝
  */
 
- /**
-  * 浅拷贝
-  * 
-  */
+/**
+ * 浅拷贝
+ *
+ */
 
- let shallowCopy = function(obj) {
+let shallowCopy = function (obj) {
   // 只拷贝对象
-  if (typeof obj !== 'object') return;
+  if (typeof obj !== "object") return;
   // 根据obj的类型判断是新建一个数组还是对象
   var newObj = obj instanceof Array ? [] : {};
   // 遍历obj，并且判断是obj的属性才拷贝
   for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-          newObj[key] = obj[key];
-      }
+    if (obj.hasOwnProperty(key)) {
+      newObj[key] = obj[key];
+    }
   }
   return newObj;
-}
+};
+
+/**
+ * 浅拷贝
+ * Object.assign()的实现
+ */
+
+const isComplexDataType = (obj) =>
+  (typeof obj === "object" || typeof obj === "function") && obj !== null;
+
+const seltAssign = function (target, ...source) {
+  if (target == null) {
+    throw new TypeError("connot convert undefined or null to object");
+  }
+  return source.reduce((acc, cur) => {
+    isComplexDataType(acc) || (acc = new Object(acc));
+    if (cur === null) return acc;
+    [...Object.key(cur), ...Object.getOwnPropertySymbols(cur)].forEach(
+      (key) => {
+        acc[key] = cur[key];
+      }
+    );
+    return acc;
+  }, target);
+};
 
 /**
  * 第一版 深拷贝
@@ -118,8 +142,10 @@ function deepClone2(source, hash = new WeakMap()) {
   // 将属性和拷贝后的值进行缓存
   hash.set(source, target);
   //开始做遍历递归调用
-  for (let key in source) {  // for...in 和 hasOwnProperty判断，确保只拿到本身的属性、方法（不包含继承的）
-    if (source.hasOwnProperty(key)) { // 防止拷贝原型链上的属性
+  for (let key in source) {
+    // for...in 和 hasOwnProperty判断，确保只拿到本身的属性、方法（不包含继承的）
+    if (source.hasOwnProperty(key)) {
+      // 防止拷贝原型链上的属性
       target[key] = deepClone2(source[key], hash);
     }
   }
@@ -135,7 +161,7 @@ let obj = {
   f: { ff: undefined, fff: ["1", /a/, 3] },
   g: function () {},
   h: Symbol("h"),
-  i: { ii: new Date()}
+  i: { ii: new Date() },
 };
 let cloneObj1 = Object.assign({}, obj);
 cloneObj1.b.bb = 111;

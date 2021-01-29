@@ -10,11 +10,19 @@
  * 绑定函数是一个 exotic function object（怪异函数对象ES6),它包装了原函数对象
  * 调用绑定函数通常会导致执行包装函数.
  *
- * 模拟思路：（1）改变this指向（call()，apply() 即可实现）;（2）返回一个函数； 
+ * 模拟思路：（1）改变this指向（call()，apply() 即可实现）;（2）返回一个函数；
  * 注意：当 bind 返回的函数作为构造函数的时候，bind 时指定的 this 值会失效，但传入的参数依然生效。所以重点要处理这个逻辑：
- * 
+ *
  * 当作为构造函数时，this 指向实例，self 指向绑定函数
  * 当作为普通函数时，this 指向 window，self 指向绑定函数
+ *
+ * 实现函数的 bind 方法核心是利用 call 绑定 this 指向，同时考虑了一些其他情况，例如
+ * bind 返回的函数被 new 调用作为构造函数时，绑定的值会失效并且改为 new 指定的对象。
+ * 定义了绑定后函数的 length 属性和 name 属性（不可枚举属性）。
+ * 绑定后函数的 prototype 需指向原函数的 prototype
+ * （真实情况中绑定后的函数是没有 prototype 的，取而代之在绑定后的函数中有个 内部属性 [[TargetFunction]] 保存原函数，
+ * 当将绑定后函数作为构造函数时，将创建的实例的 __proto__ 指向 [[TargetFunction]] 的 prototype，
+ * 这里无法模拟内部属性，所以直接声明了一个 prototype 属性）
  */
 
 /**
@@ -34,7 +42,7 @@ Function.prototype.mybind1 = function () {
       args.concat(Array.prototype.slice.call(arguments))
     );
   };
-  fNOP.prototype = this.prototype; 
+  fNOP.prototype = this.prototype;
   fbound.prototype = new fNOP();
   return fbound;
 };
@@ -61,7 +69,9 @@ Function.prototype.mybind2 = function (context, ...args) {
  */
 Function.prototype.mybind3 = function (otherThis) {
   if (typeof this !== "function") {
-    throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    throw new TypeError(
+      "Function.prototype.bind - what is trying to be bound is not callable"
+    );
   }
 
   var baseArgs = Array.prototype.slice.call(arguments, 1), // 取bind参数
@@ -137,3 +147,41 @@ fn.prototype.protoData = "原型数据";
 let fnBound = fn.mybind2(this, "王大锤", 18);
 let newBind = new fnBound();
 console.log(newBind.protoData); // "原型数据"
+
+/**
+ * 方法二
+ */
+
+// 判断是否是复杂数据类型(引用数据类型)
+const isComplexDataType = (obj) =>
+  (typeof obj === "object" || typeof obj === "function") && obj !== null;
+
+const selfBind = function (bindTarget, ...args1) {
+  if (typeof this !== "function")
+    throw new TypeError("bind must be called on a function");
+  const originFunc = this;
+  const boundFunc = function (...args2) {
+    // 如果是 new 关键字调用返回新对象
+    if (new.target) {
+      let res = originFunc.call(this, ...args1, ...args2);
+      if (isComplexDataType(res)) return res;
+      return this;
+    } else {
+      originFunc.call(bindTarget, ...args1, ...args2);
+    }
+  };
+
+  if (originFunc.prototype) {
+    boundFunc.prototype = originFunc.prototype;
+  }
+
+  const desc = Object.getOwnPropertyDescriptors(originFunc);
+  Object.defineProperties(boundFunc, {
+    length: desc.length,
+    name: Object.assign(desc.name, {
+      value: `bound ${desc.name.value}`,
+    }),
+  });
+
+  return boundFunc;
+};
