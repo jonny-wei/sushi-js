@@ -1,5 +1,3 @@
-const { for, for } = require("core-js/fn/symbol");
-
 /**
  * 重写 reduce
  *

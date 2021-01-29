@@ -35,8 +35,8 @@
  * 函数柯里化实现
  */
 function curry(fn) {
-  if(typeof fn !== 'function'){
-    throw new TypeError(fn + ' is not a function');
+  if (typeof fn !== "function") {
+    throw new TypeError(fn + " is not a function");
   }
   let args = [].slice.call(arguments, 1);
   let _curry = function () {
@@ -55,17 +55,17 @@ function curry(fn) {
  * 方法二
  */
 function curry(fn) {
-  if(fn.length <= 1) return fn;
+  if (fn.length <= 1) return fn;
   const _curry = (...args) => {
-    if(fn.length === arg.length){
-      return fn(...args)
-    }else{
+    if (fn.length === arg.length) {
+      return fn(...args);
+    } else {
       return (...args2) => {
-        return _curry(...args,args2)
-      }
+        return _curry(...args, args2);
+      };
     }
-  }
-  return _curry
+  };
+  return _curry;
 }
 
 /**
@@ -76,12 +76,26 @@ function curry(fn) {
 function add() {
   return [].reduce.call(arguments, (a, b) => a + b);
 }
+
 function curryAdd() {
   return curry(function () {
     // 里面使用了 arguments 不能用箭头函数
     return [].reduce.call(arguments, (a, b) => a + b);
   });
 }
+
+// 更好的做法
+
+const curryAdd = curry(function () {
+  // 里面使用了 arguments 不能用箭头函数
+  return [].reduce.call(arguments, (a, b) => a + b);
+});
+
+// 或
+const curryAdd = curry((...args) => {
+  return [].reduce.call(args, (a, b) => a + b);
+});
+
 const sum1 = curry(add)(1)(2)(3)(4)();
 const sum2 = curry(add)(1)(1, 2, 3)(2)();
 const sum3 = curry(add, 2)(1, 3, 4)(2, 3)(3)(4, 6)(7, 98)();
@@ -92,40 +106,40 @@ console.log("函数柯里化 ->", sum1, sum2, sum3, sum4());
  * 取一个数组对象的属性组成一个数组
  */
 const obj = [
-    {name: '小明',age: 10},
-    {name: '小花',age: 12},
-    {name: '小军',age: 18},
-    {name: '小白',age: 22},
-]
+  { name: "小明", age: 10 },
+  { name: "小花", age: 12 },
+  { name: "小军", age: 18 },
+  { name: "小白", age: 22 },
+];
 // 使用reduce + concat 实现
-function reduceProps(obj,props){
-    return obj.reduce((acc,value)=>{
-        return acc.concat(value[props])
-    },[])
+function reduceProps(obj, props) {
+  return obj.reduce((acc, value) => {
+    return acc.concat(value[props]);
+  }, []);
 }
-console.log('reduce实现根据key取value组成数组 ->', reduceProps(obj,'name'))
+console.log("reduce实现根据key取value组成数组 ->", reduceProps(obj, "name"));
 
 /**
  * 缓存记忆memoize函数
- * 
+ *
  * 用于优化比较耗时的计算，通过将计算结果缓存到内存中，这样对于同样的输入值，下次只需要中内存中读取结果。
  */
 function memoizeFunction(func) {
-    const cache = {};
-    return function() {
-        let key = arguments[0];
-        if (cache[key]) {
-            return cache[key];
-        } else {
-            const val = func.apply(null, arguments);
-            cache[key] = val;
-            return val;
-        }
-    };
+  const cache = {};
+  return function () {
+    let key = arguments[0];
+    if (cache[key]) {
+      return cache[key];
+    } else {
+      const val = func.apply(null, arguments);
+      cache[key] = val;
+      return val;
+    }
+  };
 }
 
-const fibonacci = memoizeFunction(function(n) {
-    return (n === 0 || n === 1) ? n : fibonacci(n - 1) + fibonacci(n - 2);
+const fibonacci = memoizeFunction(function (n) {
+  return n === 0 || n === 1 ? n : fibonacci(n - 1) + fibonacci(n - 2);
 });
 
 console.log(fibonacci(100));

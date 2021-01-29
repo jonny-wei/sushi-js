@@ -9,8 +9,6 @@
  * 不会改变原数组。
  */
 
-const { for, for } = require("core-js/fn/symbol");
-
 Array.prototype.some = function (callback, thisArg) {
   if (this == null) {
     throw new TypeError("Array.prototype.some called on null or undefined");
