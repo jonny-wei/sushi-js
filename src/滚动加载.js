@@ -4,7 +4,7 @@
  * 原理：监听页面滚动事件，分析clientHeight,scrollTop,scrollHeight关系
  * 
  */
-window.addEventListener(scroll,function(){
+window.addEventListener('scroll',function(){
     const clientHeight = document.documentElement.clientHeight;
     const scrollTop = document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight;

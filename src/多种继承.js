@@ -97,6 +97,9 @@
  * 与此同时，原型链还能保持不变；因此能够正常的使用 instanceof 和 isPrototypeOf
  * 
  * 寄生组合式继承时引用类型最理想的继承方式
+ * 
+ * 
+ * Object.create()方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__
  */
 // function object(obj) {
 //   function F() {}

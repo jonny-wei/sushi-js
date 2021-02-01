@@ -43,7 +43,7 @@ function curry(fn) {
     // 里面使用了 arguments 不能用箭头函数
     if (arguments.length === 0) {
       return fn.apply(this, args);
-    } else {
+    } else {  // 收集参数，返回一个函数
       args.push(...arguments);
       return _curry;
     }

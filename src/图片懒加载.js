@@ -67,6 +67,8 @@ throttle(window.addEventListener("scroll", lazyload), 500);
   * 保存着实例观察的所有元素的一些状态，比如每个元素的边界信息，当前元素对应的 DOM 节点，当前元素进入可视区域的比率。
   * 每当一个元素进入可视区域，将真正的图片赋值给当前 img 标签，同时解除对其的观察
   * 
+  * 参考 使用IntersectionObserver优化图片加载 https://juejin.cn/post/6923022184961359879
+  * 
   */
  let imgList = [...document.querySelectorAll('img')]
 
