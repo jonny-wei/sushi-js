@@ -48,9 +48,9 @@
  *
  * Promise.any(iterable) 一个成功即返回 ES2021
  * 接收一个Promise对象的集合，当其中的一个 promise 成功，就返回那个成功的promise的值。
- * 本质上，这个方法和Promise.all()是相反的。
+ * 本质上，这个方法和Promise.all()是相反的。仅在所有承诺均被拒绝的情况下拒绝。
  *
- * Promise.race(iterable)
+ * Promise.race(iterable) 不管结果本身是成功还是失败。哪个子promise执行的快就返回那个子promise的结果(失败或成功的结果)
  * 当iterable参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情
  * 作为参数调用父promise绑定的相应句柄，并返回该promise对象。
  *
