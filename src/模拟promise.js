@@ -171,7 +171,7 @@ class Promise {
         } catch (e) {
           reject(e);
         }
-      } else if (self.status === PENDING) {
+      } else if (self.status === REJECTED) {
         try {
           const result = onRejected(self.reason);
           result instanceof Promise
