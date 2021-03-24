@@ -37,6 +37,15 @@ function mynew2(myConstructor, ...args) {
 }
 
 
+function objectFactory(constructor, ...restParams) {
+  // 创建空对象，空对象关联构造函数的原型对象
+  const instance = Object.create(constructor.prototype);
+  // 执行对象类的构造函数，同时该实例的属性和方法被 this 所引用，即 this 指向新构造的实例
+  const result = constructor.call(instance, restParams);
+  // 判断构造函数的运行结果是否对象类型
+  return (typeof result === 'object' && result) || instance;
+}
+
 // 测试
 function Otaku(name, age) {
   this.name = name;

@@ -21,6 +21,24 @@ const arr = [
   new Date(),
   /a/,
 ];
+
+/**
+ * 判断是否是一个引用类型数据
+ * 布尔对象（Boolean）
+ * 数字对象（Number）
+ * 字符串对象（String）
+ * 函数对象（Function）
+ * 数组对象（Array）
+ * 日期对象（Date）
+ * 正则对象（RegExp）
+ * 错误对象（Error）
+ */
+
+function isObject(val) {
+  const type = typeof val;
+  return val !== null && (type === 'object' || type === 'function');
+}
+
 /**
  * 数据类型检测
  * 标本兼治

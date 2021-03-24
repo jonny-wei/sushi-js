@@ -22,8 +22,8 @@
  * (3) 数组：Array.prototype.slice.call(arr); Array.prototype.concat.call(arr);
  *
  * 深拷贝的方式
- * (1) JSON.parse(JSON.stringify())
- * 无法克隆函数，Symbol，RegExp，Date以及过滤了undefined。对于它不支持的数据都会直接忽略该属性。
+ * (1) JSON.parse(JSON.stringify())序列化反序列化法,对基本数据类型、对象和数组有效。
+ * 无法克隆function，Symbol，RegExp，Date以及过滤了undefined。对于它不支持的数据都会直接忽略该属性。
  * (2) 深拷贝函数(用第二版)
  * (3) 浅拷贝+递归: 存在循环引用的问题,一些类型也无法拷贝
  */
