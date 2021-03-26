@@ -12,6 +12,9 @@ const arr = [1, ,[2, [3, [{ a: [4] }, 5, ['',null,undefined]]]], 6];
  * depth 指定要提取嵌套数组的结构深度，默认值为 1。
  * depth = Infinity 可展开任意深度的嵌套数组
  * 扁平化数组空项[1, 2, , 4, 5].flat(Infinity) => [1,2,4,5]
+ * 如果原数组有空位，Array.prototype.flat() 会跳过空位。
+ * 传入 <=0 的整数将返回原数组，不扁平化
+ * 不传参数时，默认扁平化一层，可以传入一个整数，表示想要扁平化的层数。
  */
 const flat1 = arr.flat(Infinity);
 console.log("方法1 ->", flat1);
