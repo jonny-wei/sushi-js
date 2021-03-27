@@ -128,7 +128,7 @@ function deepClone1(target, hash = new WeakMap()) {
 
 /**
  * 第二版 深拷贝
- * 强烈推荐
+ * 推荐
  */
 function deepClone2(source, hash = new WeakMap()) {
   // 非引用类型或null 直接返回
@@ -200,3 +200,160 @@ console.log("深拷贝 ->", cloneObj3, obj);
 let cloneObj4 = deepClone2(obj);
 cloneObj4.i.ii = false;
 console.log("深拷贝 ->", cloneObj4, obj);
+
+
+/**
+ * 第三版 深拷贝
+ * 
+ * 强烈推荐
+ */
+
+// 可继续遍历的数据类型
+ const mapTag = '[object Map]';
+ const setTag = '[object Set]';
+ const arrayTag = '[object Array]';
+ const objectTag = '[object Object]';
+ const argsTag = '[object Arguments]';
+ // 不可继续遍历的数据类型
+ const boolTag = '[object Boolean]';
+ const dateTag = '[object Date]';
+ const numberTag = '[object Number]';
+ const stringTag = '[object String]';
+ const symbolTag = '[object Symbol]';
+ const errorTag = '[object Error]';
+ const regexpTag = '[object RegExp]';
+ const funcTag = '[object Function]';
+ 
+ const deepTag = [mapTag, setTag, arrayTag, objectTag, argsTag];
+ 
+ // 通用循环 while 相比 for > forEach > for...in 速度快
+ function forEach(array, iteratee) {
+     let index = -1;
+     const length = array.length;
+     while (++index < length) {
+         iteratee(array[index], index);
+     }
+     return array;
+ }
+
+ // 判断是否是引用类型数据
+ function isObject(target) {
+     const type = typeof target;
+     return target !== null && (type === 'object' || type === 'function');
+ }
+ // 获取数据类型
+ function getType(target) {
+     return Object.prototype.toString.call(target);
+ }
+ // 初始化被克隆对象
+ function getInit(target) {
+     const Ctor = target.constructor;
+     return new Ctor();
+ }
+ // 克隆 Symbol
+ function cloneSymbol(targe) {
+     return Object(Symbol.prototype.valueOf.call(targe));
+ }
+ // 克隆 正则
+ function cloneReg(targe) {
+     const reFlags = /\w*$/;
+     const result = new targe.constructor(targe.source, reFlags.exec(targe));
+     result.lastIndex = targe.lastIndex;
+     return result;
+ }
+ // 克隆 函数(普通函数与箭头函数判断区分)
+ function cloneFunction(func) {
+     const bodyReg = /(?<={)(.|\n)+(?=})/m;
+     const paramReg = /(?<=\().+(?=\)\s+{)/;
+     const funcString = func.toString();
+     if (func.prototype) {
+         const param = paramReg.exec(funcString);
+         const body = bodyReg.exec(funcString);
+         if (body) {
+             if (param) {
+                 const paramArr = param[0].split(',');
+                 return new Function(...paramArr, body[0]);
+             } else {
+                 return new Function(body[0]);
+             }
+         } else {
+             return null;
+         }
+     } else {
+         return eval(funcString);
+     }
+ }
+ // 克隆不可遍历类型
+ function cloneOtherType(targe, type) {
+     const Ctor = targe.constructor;
+     switch (type) {
+         case boolTag:
+         case numberTag:
+         case stringTag:
+         case errorTag:
+         case dateTag:
+             return new Ctor(targe);
+         case regexpTag:
+             return cloneReg(targe);
+         case symbolTag:
+             return cloneSymbol(targe);
+         case funcTag:
+             return cloneFunction(targe);
+         default:
+             return null;
+     }
+ }
+ 
+ function clone(target, map = new WeakMap()) {
+ 
+     // 克隆原始类型
+     if (!isObject(target)) {
+         return target;
+     }
+ 
+     // 初始化
+     const type = getType(target);
+     let cloneTarget;
+     if (deepTag.includes(type)) {
+         cloneTarget = getInit(target, type);
+     } else {
+         return cloneOtherType(target, type);
+     }
+ 
+     // 防止循环引用
+     if (map.get(target)) {
+         return map.get(target);
+     }
+     map.set(target, cloneTarget);
+ 
+     // 克隆set
+     if (type === setTag) {
+         target.forEach(value => {
+             cloneTarget.add(clone(value, map));
+         });
+         return cloneTarget;
+     }
+ 
+     // 克隆map
+     if (type === mapTag) {
+         target.forEach((value, key) => {
+             cloneTarget.set(key, clone(value, map));
+         });
+         return cloneTarget;
+     }
+ 
+     // 克隆对象和数组
+     const keys = type === arrayTag ? undefined : Object.keys(target);
+     forEach(keys || target, (value, key) => {
+         if (keys) {
+             key = value;
+         }
+         cloneTarget[key] = clone(target[key], map);
+     });
+ 
+     return cloneTarget;
+ }
+ 
+ module.exports = {
+     clone
+ };
