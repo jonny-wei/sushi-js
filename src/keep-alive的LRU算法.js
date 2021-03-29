@@ -78,7 +78,7 @@ class LRUCache {
 
   get(key) {
      if (this.cache[key]) {
-        remove(this.cache[key], key);
+        remove(this.keys, key);
         this.keys.push(key); 
         return this.cache[key];
      }
