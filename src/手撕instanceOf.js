@@ -1,7 +1,7 @@
 /**
  * 手撕 instanceof
  * while循环原型链直到null
- * 判断原型
+ * 判断一个实例是否属于某种类型
  * 
  * isPrototypeof() 与 instanceof 的区别
  * isPrototypeof() 方法用于检测一个对象是否存在于另一个对象的原型链上。

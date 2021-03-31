@@ -23,16 +23,16 @@
  * 这些方法还会返回一个新生成的 promise 对象，这个对象可以被非强制性的用来做链式调用
  *
  * 使用Promise有以下约定
- * （1）在本轮 事件循环 运行完成之前，回调函数是不会被调用的。
- * （2）即使异步操作已经完成（成功或失败），在这之后通过 then() 添加的回调函数也会被调用。
- * （3）通过多次调用 then() 可以添加多个回调函数，它们会按照插入顺序进行执行。（链式调用（chaining））
+ * （1）在本轮 事件循环 运行完成之前，回调函数是不会被调用的。[执行栈中的宏任务没有执行完，回调函数即微任务是不被eventlLoop检查与执行的]
+ * （2）即使异步操作已经完成（成功或失败），在这之后通过 then() 添加的回调函数也会被调用。[微任务执行完成，又产生新的微任务，也会在本轮 tick 中执行，不会留到下一轮 tick]
+ * （3）通过多次调用 then() 可以添加多个回调函数，它们会按照插入顺序进行执行。[then 返回一个新的promise 进行链式调用（chaining）]
  *
  * 当 .then() 中缺少能够返回 promise 对象的函数时，链式调用就直接继续进行下一环操作。
  * 一个已经处于"已敲定"（"settled"）状态的 promise 中的操作只有 promise 链式调用的栈被清空了和一个事件循环过去了之后才会被执行。
  * 这种效果跟 setTimeout(action, 10) 特别相似。
  *
  * // 构造方法
- * Promise()
+ * Promise(exector)
  *
  * // 静态方法
  * Promise.all(iterable) 都成功时才成功
@@ -241,4 +241,93 @@ class Promise {
       });
     });
   }
+}
+
+/**
+ * Promise 应用 -  异步加载图片
+ */
+function loadImageAsync(url) {
+  return new Promise(function (resolve, reject) {
+    const image = new Image();
+
+    image.onload = function () {
+      resolve(image);
+    };
+
+    image.onerror = function () {
+      reject(new Error("Could not load image at " + url));
+    };
+
+    image.src = url;
+  });
+}
+
+
+/**
+ * Promise 应用 -  实现的 Ajax GET 请求操作
+ */
+const getJSON = function(url) {
+  const promise = new Promise(function(resolve, reject){
+    const handler = function() {
+      if (this.readyState !== 4) {
+        return;
+      }
+      if (this.status === 200) {
+        resolve(this.response);
+      } else {
+        reject(new Error(this.statusText));
+      }
+    };
+    const client = new XMLHttpRequest();
+    client.open("GET", url);
+    client.onreadystatechange = handler;
+    client.responseType = "json";
+    client.setRequestHeader("Accept", "application/json");
+    client.send();
+
+  });
+
+  return promise;
+};
+
+getJSON("/posts.json").then(function(json) {
+  console.log('Contents: ' + json);
+}, function(error) {
+  console.error('出错了', error);
+});
+
+/**
+ * Generator 函数与 Promise 的结合 
+ * 
+ * 使用 Generator 函数管理流程，遇到异步操作的时候，通常返回一个Promise对象。
+ */
+ function getFoo () {
+  return new Promise(function (resolve, reject){
+    resolve('foo');
+  });
+}
+
+const g = function* () {
+  try {
+    const foo = yield getFoo();
+    console.log(foo);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+function run (generator) {
+  const it = generator();
+
+  function go(result) {
+    if (result.done) return result.value;
+
+    return result.value.then(function (value) {
+      return go(it.next(value));
+    }, function (error) {
+      return go(it.throw(error));
+    });
+  }
+
+  go(it.next());
 }
