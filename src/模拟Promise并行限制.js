@@ -15,6 +15,7 @@ class Scheduler {
     this.queue.push(promiseCreator);
   }
   taskStart() {
+    // 同步任务 一次发送 maxCount 的请求
     for (let i = 0; i < this.maxCount; i++) {
       this.request();
     }
@@ -27,7 +28,15 @@ class Scheduler {
     this.queue
       .shift()()
       .then(() => {
-        this.runCounts--;
+        /**
+         * 成功时处理逻辑
+         * 
+         * 有一个成功就要进行下一个请求保证最大并行数2 所以 runCounts-- 并进行下一个请求
+         * taskStart 中同步任务先发送 2 个 request (addTask(1000, "1")与addTask(500, "2");)
+         * this.queue.shift() 取出异步任务并执行 this.queue.shift()().then() then中是成功时的处理，
+         * 当取出的异步任务执行成功则 runCounts-- 并进行下一个请求 保证最大并行数 2
+         */
+        this.runCounts--; 
         this.request();
       });
   }
@@ -42,7 +51,7 @@ const scheduler = new Scheduler();
 
 const addTask = (time, order) => {
   scheduler.add(() => {
-    timeout(time).then(() => {
+    return timeout(time).then(() => {
       console.log(order);
     });
   });
@@ -56,3 +65,153 @@ scheduler.taskStart();
 // 3
 // 1
 // 4
+
+/**
+ * 有并发控制的 Ajax 批量请求函数 
+ *
+ * 实现一个批量请求函数 multiRequest(urls, maxNum, callback)，要求如下：
+ * 要求最大并发数 maxNum
+ * 每当有一个请求返回，就留下一个空位，可以增加新的请求
+ * 所有请求完成后，结果按照 urls 里面的顺序依次打出
+ * multiRequest 可以返回一个 promise 或者 直接执行 callback 回调
+ */
+ function multiRequest(urls, maxNum, callback) {
+  const len = urls.length;
+  const result = new Array(len).fill(false);
+  let runCount = 0;
+  return new Promise((resolve, reject) => {
+    // 最多同时发送maxNum个请求
+    while (runCount < maxNum) {
+      sendRequest();
+    }
+    function sendRequest() {
+      let curCount = runCount;
+      runCount++;
+      if (runCount >= len) {
+        callback(result);
+        resolve(result);
+      }
+      console.log(`开始发送第 ${curCount} 个请求`);
+      urls[curCount]
+        .then((value) => {
+          console.log(`第 ${curCount} 个请求：${value} 成功了！`);
+          result[curCount] = `${value} 成功`;
+        })
+        .catch((reason) => {
+          console.log(`第 ${curCount} 个请求：${reason} 失败了！`);
+          result[curCount] = `${reason} 失败`;
+        })
+        .finally(() => {
+          if (runCount < len) {
+            sendRequest();
+          }
+        });
+    }
+  });
+}
+
+// 测试
+const light = (timmer, cb) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const result = cb();
+      if (result.code === 200) {
+        resolve(result.data);
+      } else {
+        reject(result.data);
+      }
+    }, timmer);
+  });
+};
+
+const p1 = light(1000, () => {
+  return { code: 200, data: "1" };
+});
+const p2 = light(500, () => {
+  return { code: 200, data: "2" };
+});
+const p3 = light(300, () => {
+  return { code: 300, data: "3" };
+});
+const p4 = light(400, () => {
+  return { code: 200, data: "4" };
+});
+
+multiRequest([p1, p2, p3, p4], 2, (data) => {
+  console.log("执行最终的回调 ", data);
+}).then((value) => console.log("执行完的结果", value));
+
+/**
+ * 烧脑的并发控制请求
+ * 
+ * 1. new Promise 一旦创建，立即执行
+ * 2. 使用 Promise.resolve().then() 可以把任务加到微任务队列中，防止立即执行迭代方法
+ * 3. 微任务处理过程中，产生的新的微任务，会在同一事件循环内，追加到微任务队列里
+ * 4. 使用 race 在某个任务完成时，继续添加任务，保持任务按照最大并发数进行执行
+ * 5. 任务完成后，需要从 doningTasks 中移出
+ */
+
+ function multiRequest(promiseArr, maxNum) {
+  const tasks = []; // 所有的任务
+  const doingTasks = []; // 并行执行的任务
+  let count = 0; // 执行了几次
+  // 异步任务排队
+  const enqueue = () => {
+    if (count >= promiseArr.length) {
+      return Promise.resolve();
+    }
+    // 压入微任务队列，防止立即执行迭代方法
+    const task = Promise.resolve().then(() => promiseArr[count++]);
+    tasks.push(task);
+    // 执行，任务执行成功后删除一个并行任务，为下一个任务腾位置，以保证每次都有 maxNum 的任务在执行
+    console.log(`开始请求第 ${count + 1} 个任务`);
+    const doing = task.then(() =>
+      doingTasks.splice(doingTasks.indexOf(doing), 1)
+    );
+    // 压入并行执行的任务队列
+    doingTasks.push(doing);
+    // 如果并行执行的任务数量等于了最大并行数则发起请求 Promise.race 只要有任务执行完毕即返回
+    const res =
+      doingTasks.length >= maxNum
+        ? Promise.race(doingTasks) // race 无法捕获错误的结果 可用allSettled
+        : Promise.resolve();
+    // Promise.race 只要有任务执行完毕即返回不论成功与失败返回最快执行完毕的那个，成功后接着请求
+    // 保证每次都有 maxNum 的任务在执行reason
+    return res.then(enqueue);
+  };
+  return enqueue().then(() => Promise.all(tasks)); // all 无法捕获错误的结果 可用allSettled
+}
+
+// 测试
+function red() {
+  return { code: 200, data: "red" };
+}
+function green() {
+  return { code: 200, data: "green" };
+}
+function yellow() {
+  return { code: 300, data: "yellow" };
+}
+function black() {
+  return { code: 200, data: "black" };
+}
+const light = (timmer, cb) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const result = cb();
+      if (result.code === 200) {
+        resolve(result.data);
+      } else {
+        reject(result.data);
+      }
+    }, timmer);
+  });
+};
+
+const p1 = light(2000, red);
+const p2 = light(1000, yellow);
+const p3 = light(3000, green);
+const p4 = light(800, black);
+multiRequest([p1, p2, p3, p4], 2).then((data) => {
+  console.log("最终回调的结果 ", data);
+});

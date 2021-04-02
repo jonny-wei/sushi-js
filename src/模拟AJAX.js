@@ -10,6 +10,9 @@
  * 
  * responseText 在一个请求被发送后，从服务器端返回文本。
  * 
+ * response 返回一个 ArrayBuffer、Blob、Document，或 DOMString，
+ * 具体是哪种类型取决于 XMLHttpRequest.responseType 的值。其中包含整个响应实体（response entity body）。
+ * 
  * responseType 属性是一个枚举类型的属性，返回响应数据的类型。
  * 它允许我们手动的设置返回数据的类型。如果我们将它设置为一个空字符串，它将使用默认的"text"类型。
  * 
@@ -27,7 +30,7 @@
  * 
  * xhrReq.open(method, url, async, user, password);
  * 
- * https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+ * https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest
  */
 const getJSON = function (url) {
     return new Promise((resolve, reject) => {
@@ -39,7 +42,7 @@ const getJSON = function (url) {
                 return;
             }
             if(xhr.status === 200 || xhr.status === 304){
-                resolve(xhr.responseText)
+                resolve(xhr.response)
             }else{
                 reject(new Error(xhr.responseText))
             }

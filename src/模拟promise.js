@@ -209,21 +209,24 @@ class Promise {
 
   // 静态方法 all
   static all(promiseArr) {
-    const len = promiseArr.length;
-    const values = new Array(len);
-    let count = 0; // 记录已兑现的promise个数
     return new Promise((resolve, reject) => {
-      for (let i = 0; i < len; i++) {
-        Promise.resolve(promiseArr[i]).then(
-          (val) => {
-            values[i] = val;
+      let count = 0;
+      const len = promiseArr.length;
+      const result = [];
+
+      if (!len) resolve(result);
+
+      for (let index = 0; index < len; index++) {
+        Promise.resolve(promiseArr[index]).then(
+          (value) => {
+            result[index] = value;
             count++;
             if (count === len) {
-              resolve(values);
+              resolve(result);
             }
           },
-          (err) => {
-            reject(err);
+          (reason) => {
+            reject(reason);
           }
         );
       }
@@ -239,6 +242,62 @@ class Promise {
           (err) => reject(err)
         );
       });
+    });
+  }
+
+  // 手写 allSettled
+  static allSettled(promiseArr) {
+    return new Promise(function (resolve) {
+      const length = promiseArr.length;
+      const result = [];
+      let count = 0;
+
+      if (length === 0) resolve(result);
+
+      for (let [i, p] of promiseArr.entries()) {
+        Promise.resolve(p).then(
+          (value) => {
+            result[i] = { status: "fulfilled", value: value };
+            count++;
+            if (count === length) {
+              return resolve(result);
+            }
+          },
+          (reason) => {
+            result[i] = { status: "rejected", reason: reason };
+            count++;
+            if (count === length) {
+              return resolve(result);
+            }
+          }
+        );
+      }
+    });
+  }
+
+  // 手写 any
+  static any(promiseArr) {
+    return new Promise(function (resolve, reject) {
+      const length = promiseArr.length;
+      const result = [];
+      let count = 0;
+
+      if (length === 0) resolve(result);
+
+      for (let [i, p] of promiseArr.entries()) {
+        Promise.resolve(p).then(
+          (value) => {
+            return resolve(value);
+          },
+          (reason) => {
+            result[i] = reason;
+            count++;
+            if (count === length) {
+              reject(result);
+            }
+          }
+        );
+      }
     });
   }
 }
@@ -262,13 +321,12 @@ function loadImageAsync(url) {
   });
 }
 
-
 /**
  * Promise 应用 -  实现的 Ajax GET 请求操作
  */
-const getJSON = function(url) {
-  const promise = new Promise(function(resolve, reject){
-    const handler = function() {
+const getJSON = function (url) {
+  const promise = new Promise(function (resolve, reject) {
+    const handler = function () {
       if (this.readyState !== 4) {
         return;
       }
@@ -284,26 +342,28 @@ const getJSON = function(url) {
     client.responseType = "json";
     client.setRequestHeader("Accept", "application/json");
     client.send();
-
   });
 
   return promise;
 };
 
-getJSON("/posts.json").then(function(json) {
-  console.log('Contents: ' + json);
-}, function(error) {
-  console.error('出错了', error);
-});
+getJSON("/posts.json").then(
+  function (json) {
+    console.log("Contents: " + json);
+  },
+  function (error) {
+    console.error("出错了", error);
+  }
+);
 
 /**
- * Generator 函数与 Promise 的结合 
- * 
+ * Generator 函数与 Promise 的结合
+ *
  * 使用 Generator 函数管理流程，遇到异步操作的时候，通常返回一个Promise对象。
  */
- function getFoo () {
-  return new Promise(function (resolve, reject){
-    resolve('foo');
+function getFoo() {
+  return new Promise(function (resolve, reject) {
+    resolve("foo");
   });
 }
 
@@ -316,17 +376,20 @@ const g = function* () {
   }
 };
 
-function run (generator) {
+function run(generator) {
   const it = generator();
 
   function go(result) {
     if (result.done) return result.value;
 
-    return result.value.then(function (value) {
-      return go(it.next(value));
-    }, function (error) {
-      return go(it.throw(error));
-    });
+    return result.value.then(
+      function (value) {
+        return go(it.next(value));
+      },
+      function (error) {
+        return go(it.throw(error));
+      }
+    );
   }
 
   go(it.next());

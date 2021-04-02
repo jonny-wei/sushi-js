@@ -11,11 +11,15 @@
 
 function promiseRace(promiseArr) {
   return new Promise((resolve, reject) => {
-    promiseArr.forEach((p) => {
-      Promise.resolve(p).then(
-        (val) => resolve(val),
-        (err) => reject(err)
+    for (const task of promiseArr) {
+      Promise.resolve(task).then(
+        (value) => {
+          resolve(value);
+        },
+        (reason) => {
+          reject(reason);
+        }
       );
-    });
+    }
   });
 }

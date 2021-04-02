@@ -30,23 +30,65 @@
  * 如果传入的 promise 中有一个失败（rejected），Promise.all 异步地将失败的那个结果给失败状态的回调函数，而不管其它 promise 是否完成。
  */
 
-
-function promiseAll(promiseArr) {
+function myPromiseAll(promiseArr) {
   return new Promise((resolve, reject) => {
-    const ans = [];
-    let index = 0;
-    for (let i = 0; i < promiseArr.length; i++) {
-      promiseArr[i]
-        .then((res) => {
-          ans[i] = res;
-          index++;
-          if (index === promiseArr.length) {
-            resolve(ans);
+    let count = 0;
+    const len = promiseArr.length;
+    const result = [];
+
+    if (!len) resolve(result);
+
+    for (const [i, p] of promiseArr.entries()) {
+      Promise.resolve(p).then(
+        (value) => {
+          result[i] = value;
+          count++;
+          if (count === len) {
+            resolve(result);
           }
-        })
-        .catch((err) => {
-          reject(err);
-        });
+        },
+        (reason) => {
+          reject(reason);
+        }
+      );
     }
   });
 }
+
+/**
+ * 使用
+ */
+function red() {
+  return { code: 200, data: "red" };
+}
+function green() {
+  return { code: 200, data: "green" };
+}
+function yellow() {
+  return { code: 200, data: "yellow" };
+}
+const light = (timmer, cb) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const result = cb();
+      if (result.code === 200) {
+        resolve(result.data);
+      } else {
+        reject(result.data);
+      }
+    }, timmer);
+  });
+};
+
+const p1 = light(3000, red);
+const p2 = light(2000, yellow);
+const p3 = light(1000, green);
+
+myPromiseAll([p1, p2, p3]).then(
+  (value) => {
+    console.log("success ->", value);
+  },
+  (reason) => {
+    console.log("fail -> ", reason);
+  }
+);
