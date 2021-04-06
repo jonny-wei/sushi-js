@@ -6,6 +6,10 @@
  * 再让子类（subType）的原型对象等于这个空对象，就可以实现子类实例的原型等于这个空对象，
  * 而这个空对象的原型又等于父类原型对象（superType.prototype）的继承关系
  * 
+ * 首先来说下 ES5 和 ES6 继承的区别：
+ * 1. ES6 继承的子类需要调用 super() 才能拿到子类，ES5 的话是通过 apply 这种绑定的方式
+ * 2. 类声明不会提升，和 let 这些一致
+ * 
  * 而 Object.create 支持第二个参数，即给生成的空对象定义属性和属性描述符/访问器描述符，
  * 我们可以给这个空对象定义一个 constructor 属性更加符合默认的继承行为，
  * 同时它是不可枚举的内部属性（enumerable:false）
@@ -24,6 +28,9 @@
  * 将为新创建的对象添加指定的属性值和对应的属性描述符。
  * 
  * o = {}; // 以字面量方式创建的空对象就相当于: o = Object.create(Object.prototype);
+ * 
+ * class 的本质就是函数。class 实现继承的核心在于使用 extends 表明继承自哪个父类，
+ * 并且在子类构造函数中必须调用 super ，因为这段代码可以看成 Parent.call(this, value) 。
  */
 function inherit(subType, superType) {
   subType.prototype = Object.create(superType.prototype, {
