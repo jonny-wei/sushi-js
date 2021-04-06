@@ -36,6 +36,7 @@ const getJSON = function (url) {
     return new Promise((resolve, reject) => {
         const xhr = XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
         xhr.open('GET', url, false);
+        xhr.responseType = 'json';
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.onreadystatechange = () => {
             if(xhr.readyState !== 4) {
