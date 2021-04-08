@@ -47,7 +47,7 @@
  */
 
 /**
- * 重新 toFixed
+ * 重写 toFixed
  * @param {*} f
  * @returns
  */
