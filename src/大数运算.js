@@ -108,8 +108,11 @@ const floatNumberAdd = function (num1, num2) {
   let remainder = 0;
   let result = [];
   for (let i = maxLength1 + maxLength2 - 1; i >= 0; i--) {
+    // parseInt 将字符串转数字
     let num = parseInt(num1[i]) + parseInt(num2[i]) + remainder;
+    // Math.floor() 向下取整 Math.ceil()向上取整 计算进位
     remainder = Math.floor(num / 10);
+    // 将 余数 从队头压入
     result.unshift(num % 10);
   }
   if (remainder) {

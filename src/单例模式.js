@@ -35,6 +35,14 @@
  * 
  * 方式四：
  * proxy 拦截代理
+ * const proxy = new Proxy(target, handler);
+ * handler.construct() 方法主要用于拦截 new 运算命令。
+ * const proxy = new Proxy(target, {
+ *    construct: function(target, property) {
+ *        // do something
+ *    }
+ * });
+ * Reflect.construct	对构造函数进行 new 操作，相当于执行 new target(...args)
  */
 function proxy(func) {
   let instance;
