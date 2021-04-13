@@ -6,6 +6,16 @@
  * 1. 后一个函数作为前一个函数的参数
  * 2. 最后一个函数可以接受多个参数，前面的函数只能接受单个参数；后一个的返回值传给前一个
  * 类似于 fn3(fn2(fn1(fn0(x))))
+ * 
+ * 应用场景：webpack 的 loader 机制 多 loader 从右向左处理就用的 compose 函数组合的编程思想实现
+ * 函数组合的两种情况：
+ * Unix 的 pipline
+ * Compose（Webpack 采用）
+ * Loader 是 webpack 的核心概念之一，它的基本工作流是将一个文件以字符串的形式读入，对其进行语法分析及转换，
+ * 然后交由下一环节进行处理，所有载入的模块最终都会经过 moduleFactory 处理，
+ * 转成 JavaScript 可以识别和运行的代码，从而完成模块的集成。
+ * 
+ * 
  *
  * https://github.com/mqyqingfeng/Blog/issues/45
  */
