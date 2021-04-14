@@ -39,7 +39,7 @@ const objectFlatten = function (obj) {
   const flat = function (object, path = "") {
     if (checkType(object) === "object") {
       let isEmpty = true;
-      for (key in object) {
+      for (const key in object) {
         isEmpty = false;
         flat(object[key], path ? `${path}.${key}` : key);
       }

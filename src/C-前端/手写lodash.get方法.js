@@ -17,8 +17,8 @@
  * https://juejin.cn/post/6844903842996289550
  */
 const get = function (object, path, defaultValue = undefined) {
-  // path.replace(/\[(\d+)\]/g, ".$1") ==> a[0].b.c ->  a.0.b.c
-  const paths = path.replace(/\[(\d+)\]/g, ".$1").split("."); // ["a", "0", "b", "c"]
+  // { 'a': [{ 'b': { 'c': 3 } }] } => a[0].b.c => ['a','0','b','c']
+  const paths = Array.isArray(path) ? path : path.replace(/\[(\d+)\]/g, ".$1").split("."); // ["a", "0", "b", "c"]
   let result = object; // { a: [{ b: { c: 3 } }] }
   for (const key of paths) {
     // result[a] => result = [{ b: { c: 3 } }] => result[0] = { b: { c: 3 } } => ...
