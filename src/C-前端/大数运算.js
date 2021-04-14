@@ -312,8 +312,9 @@ const addLargeNumber = (a = "", b = "", methood = "+") => {
  * 4. 每次只考虑两位，乘积 与 个位 相加
  *    个位保留余数
  *    十位保留取整，取整直接舍弃小数点，用0 |效率，高于parseInt
- * 5. while循环，删除多余的0
+ * 5. while循环，删除多余的0（因为shift可以改变原数组）
  * 
+ * 数组存储每一位结果(pos[i+j]存储乘积的个位数，pos[i+j+1]存储乘积的十位数也就是进位数)
  */
 const multiply = (num1, num2) => {
   if (isNaN(num1) || isNaN(num2)) return "";
@@ -325,13 +326,13 @@ const multiply = (num1, num2) => {
   const pos = new Array(len1 + len2).fill(0);
 
   for (let i = len1 - 1; i >= 0; i--) {
-    const n1 = +num1[i];
+    const n1 = +num1[i]; // 可以写成 parseInt(num1[i])
     for (let j = len2 - 1; j >= 0; j--) {
       const n2 = +num2[j];
       const multi = n1 * n2;
       const sum = pos[i + j + 1] + multi;
       pos[i + j + 1] = sum % 10;
-      pos[i + j] += (sum / 10) | 0;
+      pos[i + j] += (sum / 10) | 0; // res[i + j] = Math.floor(sum / 10);
     }
   }
   while (pos[0] === 0) {
