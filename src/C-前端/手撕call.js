@@ -11,6 +11,7 @@
  * 
  * 原理就是将函数作为传入的上下文参数（context）的属性执行，
  * 这里为了防止属性冲突 方法二 使用了 ES6 的 Symbol 类型
+ * thisArg[fn] = this --->  thisArg[fn](...args) ---> delete thisArg[fn]
  *
  */
 
@@ -33,7 +34,7 @@ Function.prototype.mycall1 = function () {
 };
 
 /**
- * 方法2
+ * 方法2 (推荐)
  */
 Function.prototype.mycall2 = function (thisArg, ...args) {
   if (typeof this !== "function") {

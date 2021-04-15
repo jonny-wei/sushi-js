@@ -1,9 +1,11 @@
 /**
  * 斐波那契数列及其优化
  *
- * 函数柯里化
+ * 最传统的做法就是使用递归，但是我们知道，若递归深度过大，就会导致栈溢出。
+ * 为了解决该问题，我们可以使用动态规划，将每次前两数之和存起来，便于下次直接使用
+ * 这样就把一个栈溢出的问题，变为了单纯的数学加法，大大减少了内存的压力
  *
- * 利用函数记忆，将之前运算过的结果保存下来，对于频繁依赖之前结果的计算能够节省大量的时间，
+ * 利用函数记忆与闭包，将之前运算过的结果保存下来，对于频繁依赖之前结果的计算能够节省大量的时间，
  * 例如斐波那契数列，缺点就是闭包中的 obj 对象会额外占用内存
  */
 let fibonacci = function (n) {
@@ -20,7 +22,7 @@ const memory = function (fn) {
   };
 };
 
-fibonacci = memory(fibonacci);
+// fibonacci = memory(fibonacci);
 
 /**
  * 另外使用动态规划比前者的空间复杂度更低，也是更推荐的解法
@@ -39,3 +41,31 @@ function fibonacci_DP(n) {
   }
   return res;
 }
+// 或者(答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。)
+function fibonacci_DP(n) {
+  if (n === 0) return 0;
+  if (n === 1) return 1;
+  let n1 = 0,
+    n2 = 1,
+    sum;
+  for (let i = 0; i < n; i++) {
+    sum = (n1 + n2) % 1000000007;
+    n1 = n2;
+    n2 = sum;
+  }
+  return n1;
+};
+
+// 测试 普通fibonacci性能 < memory(fibonacci)性能 < fibonacci_DP(n)性能
+console.time("time1");
+console.log(fibonacci(20));
+console.timeEnd("time1");
+
+console.time("time2");
+fibonacci = memory(fibonacci);
+console.log(fibonacci(20));
+console.timeEnd("time2");
+
+console.time("time3");
+console.log(fibonacci_DP(20));
+console.timeEnd("time3");

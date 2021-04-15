@@ -31,7 +31,7 @@ Function.prototype.myapply1 = function () {
 };
 
 /**
- * 方法2
+ * 方法2 (推荐)
  */
 Function.prototype.myapply2 = function () {
   if (typeof this !== "function") {

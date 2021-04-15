@@ -314,7 +314,7 @@ const addLargeNumber = (a = "", b = "", methood = "+") => {
  *    十位保留取整，取整直接舍弃小数点，用0 |效率，高于parseInt
  * 5. while循环，删除多余的0（因为shift可以改变原数组）
  * 
- * 数组存储每一位结果(pos[i+j]存储乘积的个位数，pos[i+j+1]存储乘积的十位数也就是进位数)
+ * 数组存储每一位结果(pos[i+j+1]存储乘积的个位数，pos[i+j]存储乘积的十位数也就是进位数)
  */
 const multiply = (num1, num2) => {
   if (isNaN(num1) || isNaN(num2)) return "";

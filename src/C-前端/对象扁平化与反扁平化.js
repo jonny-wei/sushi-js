@@ -29,7 +29,8 @@ objectFlat({ a: { b: { c: 1 }, d: 2 } }); // {a.b.c: 1, a.d: 2}
 
 /**
  * 对象扁平化(推荐)
- *
+ * 
+ * 其实就是递归拼接 path 路径
  */
 const objectFlatten = function (obj) {
   let result = {};
@@ -69,6 +70,10 @@ objectFlatten({ a: { b: { c: 1 } }, d: { e: [0, 1] } }); // {a.b.c: 1, d.e[0]: 0
 /**
  * 对象反扁平化
  * 方法一 正则 (推荐)
+ * 
+ * regex.exec(key) 将 a[0].b.c 解析成类似 [a,0,b,c]
+ * 这儿只不过是正则解析的数组
+ * 然后 while 循环这个数组构造对象
  */
 const objectUnFlatten = function (data) {
   if (Object(data) !== data || Array.isArray(data)) return data;
