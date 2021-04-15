@@ -1,6 +1,8 @@
 /**
  * 函数式编程之组合与管道
  * 函数组合 - compose 函数 与 pointfree 概念
+ * 
+ * 在 UNix/Linux 中称管道 pipe; 在 webpack 中称函数组合compose，都是一个概念
  *
  * compose函数的作用就是组合函数，依次组合传入的函数：
  * 1. 后一个函数作为前一个函数的参数
@@ -20,7 +22,7 @@
  * https://github.com/mqyqingfeng/Blog/issues/45
  */
 
-// 函数式编程之组合与管道
+// 函数式编程之组合与管道(推荐)
  function compose() {
   let args = arguments;
   let start = args.length - 1;
@@ -34,10 +36,10 @@
   }
 }
 
+// 与 compose 一样，一样的概念
 function pipe() {
   let args = arguments;
   let start = 0;
-  let length = args.length;
   let result;
   return function () {
       result = args[start].apply(this, arguments);
@@ -49,10 +51,12 @@ function pipe() {
 }
 
 /**
- * 方法一 reduce 实现
+ * 方法一 reduce 实现 (推荐)
  *
  * compose(f4,f3,f2,f1)(c,d,e)
  * compose(f4,f3,f2,f1)返回的是一个函数
+ * 
+ * 核心 fn1(fn2(fn3(1,2))) 转化为 compose(fn1,fn2,fn3)(1,2)
  *
  * reduce回调函数第一次执行时，返回值为 函数 (...args) => f4(f3(...args))，作为下一次执行的a参数
  * 回调函数第二次执行时，返回值为 函数(...args) => f4(f3(f2(...args))),作为下一次执行的a参数
