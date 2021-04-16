@@ -1,10 +1,48 @@
 /**
  * 图片懒加载
- *
+ * 
+ * 判断元素是否进入视口方法：
+ * 1. el.offsetTop(scrollHeight) - document.documentElement.scrollTop <= viewPortHeight(clientHeight)
+ * 2. el.getBoundingClientRect().top <= viewPortHeight(clientHeight)
+ * 3. intersectionRatio > 0 && intersectionRatio <= 1
+ * 根据元素与视口是否相交，可以进行吸顶、吸底、曝光上报、列表加载更多、图片懒加载等操作。
+ * 
+ * 性能问题
+ * 在主线程上运行，因此频繁触发、调用会造成性能问题
+ * 无论是否触发相交，滚动结束后都会进行判断
+ * 获取srollTop的值和getBoundingClientRect方法都会导致回流
+ * 滚动事件会绑定多个事件处理函数，阻塞UI渲染
+ * 
+ * IntersectionObserver Api：
+ * 
+ * let observer = new IntersectionObserver(callback, options);
+ * options：
+ *  1. root 根元素，不指定默认为视窗
+ *  2. rootMargin 根元素的外边距
+ *  3. threshold 目标元素与根元素相交比例达到该值触发回调
+ * 
+ * callback(entries, observer)
+ * entries:{
+ *  boundingClientRect 目标元素的区域信息，getBoundingClientRect()的返回值
+ *  intersectionRatio  目标元素与根元素交叉的区域信息
+ *  isIntersecting 目标元素是否进入根元素区域
+ *  rootBounds 根元素的矩形区域信息
+ *  target 被观察dom节点
+ *  time 相交发生时距离页面打开时的毫秒数
+ * }
+ * 
+ * 实例方法：
+ * observe 开始监听一个目标元素(target)，target必须是root的后代
+ * unobserve 停止监听一个目标元素
+ * takeRecords 返回所有监听的目标元素集合
+ * disconnect 停止所有监听
+ */
+
+/**
+ * 方法一 
  * 可以给img标签统一自定义属性data-src='default.png'，
  * 当检测到图片出现在窗口之后再补充src属性，此时才会进行图片资源加载。
  */
-
 function lazyload() {
   const imgs = document.getElementByTagName("img");
   const len = imgs.length;
@@ -75,13 +113,17 @@ throttle(window.addEventListener("scroll", lazyload), 500);
  let lazyLoad = function(){
    let observer = new IntersectionObserver(entries => {
      entries.forEach(entry =>{
+       // intersectionRatio  目标元素与根元素交叉的区域信息
        if(entry.intersectionRatio > 0){
+         // target 被观察dom节点
          entry.target.src = entry.target.dataset.src
+         // unobserve 停止监听一个目标元素
          observer.unobserve(entry.target)
        }
      })
    })
    imgList.forEach(img => {
+     //  observe 开始监听一个目标元素(target)，target必须是root的后代
     observer.observe(img)
   })
  }
