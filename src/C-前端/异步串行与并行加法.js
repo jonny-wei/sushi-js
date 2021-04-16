@@ -35,10 +35,17 @@ add1([1, 2, 3, 4, 5, 6, 7, 8, 9]).then((sum) =>
   console.log("异步串行加法结果", sum)
 );
 
-// 异步并行
+/**
+ * 异步并行
+ * 同步代码构造异步并行任务队列
+ * Promise.all 并行请求
+ * 递归
+ * @param {*} arr 
+ * @returns 
+ */
 async function parallelSum(arr) {
   if (arr.length === 1) return arr[0];
-  const tasks = [];
+  const tasks = []; // 异步并行任务队列
   for (let i = 0; i < arr.length; i += 2) {
     tasks.push(promiseAdd(arr[i], arr[i + 1] || 0));
   }
