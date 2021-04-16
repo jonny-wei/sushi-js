@@ -3,6 +3,7 @@
  * 
  */
 function parseParam(url) {
+  // /\?(.+)$/
   const paramsStr = /.+\?(.+)$/.exec(url)[1]; // 将 ? 后面的字符串取出来
   const paramsArr = paramsStr.split("&"); // 将字符串以 & 分割后存到数组中
   let paramsObj = {};
