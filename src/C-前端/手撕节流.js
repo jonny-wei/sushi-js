@@ -163,7 +163,7 @@ const throttle = (
     let now = new Date().getTime();
     if (!options.leading) {
       if (timer) return;
-      time = setTimeout(() => {
+      timer = setTimeout(() => {
         timer = null;
         func.apply(options.context, args);
       }, time);

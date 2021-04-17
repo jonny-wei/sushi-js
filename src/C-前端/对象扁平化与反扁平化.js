@@ -79,7 +79,7 @@ const objectUnFlatten = function (data) {
   if (Object(data) !== data || Array.isArray(data)) return data;
   let regex = /\.?([^.\[\]]+)|\[(\d+)\]/g;
   let result = {};
-  for (key in data) {
+  for (const key in data) {
     let cur = result;
     let path = "";
     let m = null;
@@ -89,7 +89,7 @@ const objectUnFlatten = function (data) {
     }
     cur[path] = data[key];
   }
-  return result[""] || result;
+  return result[""] || result; // result[""] 关键
 };
 // 测试
 objectUnFlatten({ "a.b.c": 1, "d.e[0]": 0, "d.e[1]": 1 });
