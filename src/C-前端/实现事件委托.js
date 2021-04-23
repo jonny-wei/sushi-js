@@ -15,11 +15,15 @@
  * 3. 事件委托也是有一定局限性，比如 focus、blur 之类的事件本身没有事件冒泡机制，所以无法委托
  * 4. mousemove、mouseout 这样的事件，虽然有事件冒泡，但是只能不断通过位置去计算定位，对性能消耗高，因此也是不适合于事件委托的。
  */
-function delegate(element, eventType, selector, fn) {
-  element.addEventListener(eventType, (e) => {
+function on(eventType, elDelegate, selector, fn) {
+  if (!(elDelegate instanceof Element) && typeof elDelegate === "string") {
+    elDelegate = document.querySelector(elDelegate);
+  }
+  elDelegate.addEventListener(eventType, (e) => {
     let el = e.target;
     while (!el.matches(selector)) {
-      if (element === el) {
+      // 注意：matches接收的是CSS选择器
+      if (elDelegate === el) {
         el = null;
         break;
       }
@@ -27,21 +31,23 @@ function delegate(element, eventType, selector, fn) {
     }
     el && fn.call(el, e, el);
   });
-  return element;
+  return elDelegate;
 }
+// 使用方式
+on("click", "div", "#btn1", fn);
 
 /**
- * 
+ *
  * @param {*} parentSelector 一个选择器字符串用于过滤需要实现代理的父层元素，既事件需要被真正绑定之上
  * @param {*} targetSelector 一个选择器字符串用于过滤触发事件的选择器元素的后代，既我们需要被代理事件的元素
- * @param {*} events  一个或多个用空格分隔的事件类型和可选的命名空间，如 click 或 keydown.click 
+ * @param {*} events  一个或多个用空格分隔的事件类型和可选的命名空间，如 click 或 keydown.click
  * @param {*} foo 需要代理事件响应的函数
  * 这里就有几个关键点：
  * 对于父层代理的元素可能有多个，需要一一绑定事件；
  * 对于绑定的事件类型可能有多个，需要一一绑定事件；
  * 在处理匹配被代理的元素之中需要考虑到兼容性问题；
  * 在执行所绑定的函数的时候需要传入正确的参数以及考虑到 this 的问题；
- * 
+ *
  * http://caibaojian.com/eventdelegate.html
  */
 function eventDelegate(parentSelector, targetSelector, events, foo) {
@@ -98,4 +104,6 @@ function eventDelegate(parentSelector, targetSelector, events, foo) {
   });
 }
 // 使用
-eventDelegate('#list', 'li', 'click', function () { console.log(this); });
+eventDelegate("#list", "li", "click", function () {
+  console.log(this);
+});

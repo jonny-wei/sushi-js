@@ -1,10 +1,15 @@
 /**
  * 数据类型检测
- * typeof：只能检测出一些基本类型数据和function，null和除function的其他引用类型数据都返回 'object'
+ * 1. typeof：只能检测出一些基本类型数据和function，null和除function的其他引用类型数据都返回 'object'
  * typeof function fn() {} = 'function'
- * instanceof：基于原型链进行查询，如果查询结果在原型链中，就会返回true。
+ * 2. instanceof：基于原型链进行查询，如果查询结果在原型链中，就会返回true。
  * /a/ instanceof Object -> true
  * /a/ instanceof RegExp -> true
+ * 3. isNaN() 函数用于检查其参数是否是非数字值。
+ * 4. isArray()  检测数组
+ * 5. 使用特有的原型链上的方法都可以检测例如 push
+ * 6. 使用正则表达式 eg: /\d+/.test(val) 检测是否是 Number 类型
+ * 7. 通用的 Object.prototype.toString.call(val).slice(8, -1).toLowerCase()
  */
 const arr = [
   null,
