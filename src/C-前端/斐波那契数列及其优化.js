@@ -1,6 +1,6 @@
 /**
  * 斐波那契数列及其优化
- * 
+ *
  * 0、1、1、2、3、5、8、13、21、34
  * F(0)=0，F(1)=1, F(n)=F(n - 1)+F(n - 2)（n ≥ 2，n ∈ N*）
  *
@@ -44,6 +44,20 @@ function fibonacci_DP(n) {
   }
   return res;
 }
+function fibonacci3(n) {
+  let pre1 = 1;
+  let pre2 = 1;
+  let current = 2;
+  if (n <= 2) {
+    return current;
+  }
+  for (let i = 2; i < n; i++) {
+    pre1 = pre2;
+    pre2 = current;
+    current = pre1 + pre2;
+  }
+  return current;
+}
 // 或者(答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。)
 function fibonacci_DP(n) {
   if (n === 0) return 0;
@@ -57,7 +71,7 @@ function fibonacci_DP(n) {
     n2 = sum;
   }
   return n1;
-};
+}
 
 // 测试 普通fibonacci性能 < memory(fibonacci)性能 < fibonacci_DP(n)性能
 console.time("time1");

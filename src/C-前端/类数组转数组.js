@@ -8,7 +8,8 @@
  * (c) Array.from(arrayLike);
  * (d) Array.prototype.concat.apply([], arrayLike)
  * (e) ES6的 ... 运算符
-
+ * 
+ * 转换后的数组长度由 length 属性决定。索引不连续时转换结果是连续的，会自动补位。
  */
 
  const arrLike = document.querySelectorAll('div')
