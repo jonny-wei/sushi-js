@@ -43,6 +43,36 @@ class EventEmitter {
   }
 }
 
+/**
+ * 方法二
+ *
+ * Map 实现
+ */
+
+class Observer {
+  static events = new Map();
+
+  static on(name, fn) {
+    this.events.set(name, { isOnce: false, fn });
+  }
+
+  static once(name, fn) {
+    this.events.set(name, { isOnce: true, fn });
+  }
+
+  static off(name) {
+    this.events.delete(name);
+  }
+
+  static emit(name, data) {
+    let cache = this.events.get(name);
+    if (cache) {
+      if (cache.isOnce) this.events.delete(name);
+      cache.fn(data);
+    }
+  }
+}
+
 // vue 中自定义事件的实现
 // 参照 vue 源码实现
 var EventEmiter = function () {

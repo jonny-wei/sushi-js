@@ -3,6 +3,10 @@
  * while循环原型链直到null
  * 判断一个实例是否属于某种类型
  * 
+ * 而 o instanceOf O的实现原理是，检测o的原型链上有没有O.prototype 
+ * 即 o.proto == O.prototype || o.proto.proto == O.prototype
+ * instanceof 用于检测一个对象在其原型链中是否存在一个构造函数的 prototype 属性
+ * 
  * isPrototypeof() 与 instanceof 的区别
  * isPrototypeof() 方法用于检测一个对象是否存在于另一个对象的原型链上。
  * instanceof 用于检测一个对象在其原型链中是否存在一个构造函数的 prototype 属性
@@ -16,7 +20,7 @@
  * instanceof能否判断基本数据类型？
  * 能。但需要手动实现。将原有的instanceof方法重定义。
  * 
- * 原理是递归遍历 right 参数的原型链，每次和 left 参数作比较，
+ * 原理是递归遍历 left 参数的原型链，每次和 right 参数作比较，
  * 遍历到原型链终点时则返回 false，找到则返回 true
  */
 
