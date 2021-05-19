@@ -30,13 +30,13 @@ class Scheduler {
       .then(() => {
         /**
          * 成功时处理逻辑
-         * 
+         *
          * 有一个成功就要进行下一个请求保证最大并行数2 所以 runCounts-- 并进行下一个请求
          * taskStart 中同步任务先发送 2 个 request (addTask(1000, "1")与addTask(500, "2");)
          * this.queue.shift() 取出异步任务并执行 this.queue.shift()().then() then中是成功时的处理，
          * 当取出的异步任务执行成功则 runCounts-- 并进行下一个请求 保证最大并行数 2
          */
-        this.runCounts--; 
+        this.runCounts--;
         this.request();
       });
   }
@@ -67,7 +67,7 @@ scheduler.taskStart();
 // 4
 
 /**
- * 有并发控制的 Ajax 批量请求函数 
+ * 有并发控制的 Ajax 批量请求函数
  *
  * 实现一个批量请求函数 multiRequest(urls, maxNum, callback)，要求如下：
  * 要求最大并发数 maxNum
@@ -75,7 +75,7 @@ scheduler.taskStart();
  * 所有请求完成后，结果按照 urls 里面的顺序依次打出
  * multiRequest 可以返回一个 promise 或者 直接执行 callback 回调
  */
- function multiRequest(urls, maxNum, callback) {
+function multiRequest(urls, maxNum, callback) {
   const len = urls.length;
   const result = new Array(len).fill(false);
   let runCount = 0;
@@ -141,9 +141,51 @@ multiRequest([p1, p2, p3, p4], 2, (data) => {
   console.log("执行最终的回调 ", data);
 }).then((value) => console.log("执行完的结果", value));
 
+const parallelFetch = function (urls, max, callback) {
+  if (!window.fetch || typeof window.fetch !== "function") {
+    throw new Error("当前环境不支持 fetch 请求");
+  }
+  if (!urls || urls.length <= 0) {
+    throw new Error("urls is Empty, 请传入正确的请求地址");
+  }
+  const len = urls.length;
+  const max = max || 1; // 最大并发值
+  let currentIndex = 0; // 当前请求地址索引
+  let maxFetch = len >= max ? max : len; // 当前可以正常请求的数量，保证最大并发的安全性
+  let finishedFetch = 0; // 当前完成的请求数量，用于判断何时调用回调
+  for (let i = 0; i < maxFetch; i++) {
+    fetchFunc();
+  }
+  function fetchFunc() {
+    // 所有请求已完成 执行回调
+    if (finishedFetch === len) {
+      return callback();
+    }
+    // 当前请求的索引大于请求地址数组的长度，则不继续请求
+    if (currentIndex >= len) {
+      maxFetch = 0;
+    }
+    if (maxFetch > 0) {
+      fetch(urls[currentIndex])
+        .then((value) => {
+          maxFetch += 1;
+          finishedFetch += 1;
+          fetchFunc();
+        })
+        .catch((err) => {
+          maxFetch += 1;
+          finishedFetch += 1;
+          fetchFunc();
+        });
+      currentIndex += 1;
+      maxFetch -= 1;
+    }
+  }
+};
+
 /**
  * 烧脑的并发控制请求
- * 
+ *
  * 1. new Promise 一旦创建，立即执行
  * 2. 使用 Promise.resolve().then() 可以把任务加到微任务队列中，防止立即执行迭代方法
  * 3. 微任务处理过程中，产生的新的微任务，会在同一事件循环内，追加到微任务队列里
@@ -151,7 +193,7 @@ multiRequest([p1, p2, p3, p4], 2, (data) => {
  * 5. 任务完成后，需要从 doningTasks 中移出
  */
 
- function multiRequest(promiseArr, maxNum) {
+function multiRequest(promiseArr, maxNum) {
   const tasks = []; // 所有的任务
   const doingTasks = []; // 并行执行的任务
   let count = 0; // 执行了几次
