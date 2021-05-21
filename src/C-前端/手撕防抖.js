@@ -225,3 +225,18 @@ const debounce = (
   };
   return _debounce;
 };
+
+// 测试用例
+let log = debounce(
+  (i) => {
+    console.log('防抖', i);
+  },
+  1000,
+  { leading: true, context: this }
+);
+// 用例1
+window.addEventListener("resize",log);
+// 用例2
+for(let i = 0; i < 1000; i++) {
+  log(i)
+}
