@@ -87,11 +87,11 @@ function multiRequest(urls, maxNum, callback) {
     function sendRequest() {
       let curCount = runCount;
       runCount++;
+      console.log(`开始发送第 ${curCount} 个请求`);
       if (runCount >= len) {
         callback(result);
         resolve(result);
       }
-      console.log(`开始发送第 ${curCount} 个请求`);
       urls[curCount]
         .then((value) => {
           console.log(`第 ${curCount} 个请求：${value} 成功了！`);
@@ -140,6 +140,39 @@ const p4 = light(400, () => {
 multiRequest([p1, p2, p3, p4], 2, (data) => {
   console.log("执行最终的回调 ", data);
 }).then((value) => console.log("执行完的结果", value));
+
+// 测试用例2
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(1);
+  }, 1000);
+});
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(2);
+  }, 2000);
+});
+const p3 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(3);
+  }, 600);
+});
+const p4 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(4);
+  }, 3000);
+});
+promiseMuilti([p4, p2, p1, p3], 3, () => {
+  console.log("callback");
+})
+  .then((value) => {
+    console.log("success", value);
+  })
+  .catch((err) => {
+    console.log("err", value);
+  });
+
+
 
 const parallelFetch = function (urls, max, callback) {
   if (!window.fetch || typeof window.fetch !== "function") {

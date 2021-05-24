@@ -195,7 +195,6 @@ cloneObj2.b.bb = 222;
 console.log("深拷贝 ->", cloneObj2, obj);
 // 结论：cloneObj2的改变不影响obj 但是无法克隆函数，Symbol，RegExp，Date以及过滤了undefined。对于它不支持的数据都会直接忽略该属性。
 
-cloneObj3.b.bb = 333;
 obj.b.bb = obj.b; // 循环引用了 如果不hash.has不判断 那么就会造成栈溢出
 let cloneObj3 = deepClone1(obj);
 cloneObj3.b.bb = 333;
