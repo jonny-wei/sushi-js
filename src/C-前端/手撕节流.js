@@ -8,7 +8,7 @@
  * 定义：函数节流 throttle 指某个函数在一定时间间隔内执行一次，
  * 在这个时间间隔内将无视后来产生的函数调用请求。
  * 持续触发事件，每隔一段时间，只执行一次事件。
- * 
+ *
  * 规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效
  *
  * 原理：节流的实现，有两种主流的实现方式，一种是使用时间戳，一种是设置定时器。
@@ -188,3 +188,12 @@ const throttle = (
 
   return _throttle;
 };
+// 测试用例
+let log = throttle(
+  () => {
+    console.log("throttle");
+  },
+  1000,
+  { leading: true, trailing: true }
+);
+window.addEventListener("scroll", log, false);
