@@ -13,6 +13,14 @@ function render(template, data) {
   return template; // 如果模板没有模板字符串直接返回
 }
 
+const render = (template, data) => {
+  const regex = /\{\{(.*?)\}\}/g;
+  template = template.replace(regex, (match,key) =>{
+    return data[key.trim()]
+  })
+  return template
+}
+
 // 测试
 let template = "我是{{name}}，年龄{{age}}，性别{{sex}}";
 let person = {
