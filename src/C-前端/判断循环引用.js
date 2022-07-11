@@ -14,6 +14,7 @@ const isCycleObject = (obj, parent) => {
   for (let key in obj) {
     // 判断是否是对象
     if (typeof obj[key] === "object") {
+      
       let flag = false; // flag 初始化为 false 非循环引用对象
       /**
        * 遍历数组中每一项一层对象 判断是否与 obj[key] 相等

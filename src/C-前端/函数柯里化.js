@@ -29,15 +29,15 @@
  * javascript 中的柯里化函数和 bind 函数提供了强大的动态函数创建功能，但是两者都不应该滥用，因为每个函数都带来额外的开销
  * 柯里化通常也称部分求值，其含义是给函数分步传递参数，每次传递参数后部分应用参数，
  * 并返回一个更具体的函数接受剩下的参数，这中间可嵌套多层这样的接受部分参数函数，直至返回最后结果。
- * 
+ *
  * https://www.jianshu.com/p/2975c25e4d71
  */
 
 /**
- * 函数柯里化实现 (推荐)
- * 
- * 核心 fn(1,2,3,4) 转化为 fn(1)(2)(3)(4) 
- * 
+ * 函数柯里化实现
+ *
+ * 核心 fn(1,2,3,4) 转化为 fn(1)(2)(3)(4)
+ *
  * 核心就是收集参数，收集完了就执行
  */
 function curry(fn) {
@@ -49,7 +49,8 @@ function curry(fn) {
     // 里面使用了 arguments 不能用箭头函数
     if (arguments.length === 0) {
       return fn.apply(this, args);
-    } else {  // 收集参数，返回一个函数
+    } else {
+      // 收集参数，返回一个函数
       args.push(...arguments);
       return _curry;
     }
@@ -73,6 +74,18 @@ function curry(fn) {
   };
   return _curry;
 }
+
+// 方式三  (推荐)
+const curry = (func) => {
+  let argsLength = func.length; // 函数形参个数
+  let curried = (...args) => {
+    if (args.length < argsLength) {
+      return (...rest) => curried(...args, ...rest);
+    }
+    return func(...args);
+  };
+  return curried;
+};
 
 /**
  * 实现add(1)(2)(3)(4)=10; 、 add(1)(1,2,3)(2)=9;

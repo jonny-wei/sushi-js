@@ -22,7 +22,7 @@
  * https://github.com/mqyqingfeng/Blog/issues/45
  */
 
-// 函数式编程之组合与管道(推荐)
+// 函数式编程之组合与管道
  function compose() {
   let args = arguments;
   let start = args.length - 1;
@@ -66,6 +66,9 @@ function pipe() {
  * 那么如果想从左到右返回结果呢?
  * 1. 使用reduceRight
  * 2. 将funcs倒序
+ * webpack - loader 执行原理
+ * redux compose 原理
+ * lodash flow、flowRight
  */
 function compose(...funcs) {
   //没有传入函数参数，就返回一个默认函数（直接返回参数）
@@ -81,12 +84,27 @@ function compose(...funcs) {
   return funcs.reduce((a, b) => (...args) => a(b(...args)));
 }
 
+function composeRight(...funcs) {
+  //没有传入函数参数，就返回一个默认函数（直接返回参数）
+  if (funcs.length === 0) {
+    return (arg) => arg;
+  }
+
+  if (funcs.length === 1) {
+    // 单元素数组时调用reduce，会直接返回该元素，不会执行callback;所以这里手动执行
+    return funcs[0];
+  }
+  // 依次拼凑执行函数
+  return funcs.reduceRight((a, b) => (...args) => a(b(...args)));
+}
+
 // 测试
 let a = (x, y) => x + y,
   b = (x) => x * x,
   c = (x) => (x === 0 ? x : 1 / x);
 
 compose(c, b, a)(1, 2); // 1/9
+composeRight(a, b, c)(1, 2); // 1/9
 
 /**
  * 方法二 迭代

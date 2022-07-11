@@ -332,7 +332,7 @@ const multiply = (num1, num2) => {
       const multi = n1 * n2;
       const sum = pos[i + j + 1] + multi;
       pos[i + j + 1] = sum % 10;
-      pos[i + j] += (sum / 10) | 0; // res[i + j] = Math.floor(sum / 10);
+      pos[i + j] += (sum / 10) | 0; // res[i + j] += Math.floor(sum / 10);
     }
   }
   while (pos[0] === 0) {
