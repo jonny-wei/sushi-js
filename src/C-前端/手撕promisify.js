@@ -31,7 +31,6 @@
  * 2. 如果目标函数不存在对应的属性，按照Error first callback的约定生成对应的处理函数然后返回
  * 添加了这个 custom 属性以后，就不用再担心使用方针对你的函数调用 promisify 了。
  */
-const { promisify } = require("util");
 // 比如我们有一个对象，提供了一个返回多个参数的回调版本的函数
 const obj = {
   getData(callback) {

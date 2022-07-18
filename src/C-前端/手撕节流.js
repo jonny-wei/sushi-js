@@ -159,7 +159,7 @@ const throttle = (
   time,
   options = { leading: true, trailing: false, context: null }
 ) => {
-  let previous = new Date(0).getTime;
+  let previous = new Date(0).getTime();
   let timer = null;
   const _throttle = function (...args) {
     let now = new Date().getTime();

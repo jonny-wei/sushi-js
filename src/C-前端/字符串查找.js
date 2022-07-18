@@ -49,3 +49,54 @@ b = "1234567"; // 返回 -1
 a = "355";
 b = "12354355"; // 返回 5
 isContain(a, b);
+
+
+/**
+ * 查找字符串中出现最多的字符和个数
+ *
+ * 例: abbcccddddd -> 字符最多的是d，出现了5次
+ */
+
+ const maxChar = (str) => {
+  const map = new Map();
+  let max = {
+    char: null,
+    count: 0,
+  };
+  for (let char of str) {
+    if (map.has(char)) {
+      map.set(char, map.get(char) + 1);
+    } else {
+      map.set(char, 1);
+    }
+
+    max.char = map.get(char) === max.count ? max.char : char;
+    max.count = Math.max(max.count, map.get(char));
+  }
+
+  return max;
+};
+
+// maxChar("abbcccddddd");
+
+// 字符串压缩
+const slowStr = (str) => {
+  const map = new Map();
+  let res = "";
+  for (let char of str) {
+    if (map.has(char)) {
+      map.set(char, map.get(char) + 1);
+    } else {
+      map.set(char, 1);
+    }
+  }
+
+  for (let [key, value] of map.entries()) {
+    console.log(key, value);
+    res += `${value}${key}`;
+  }
+
+  return res;
+};
+
+// slowStr("abbcccddddd");

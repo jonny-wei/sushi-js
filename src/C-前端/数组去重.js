@@ -40,19 +40,18 @@ console.log("方法1 ->", deplicates1);
 /********** 强烈推荐使用 **************/
 /**
  * 方法2
- * filter + [typeof item + item]
+ * filter + obj[typeof item + JSON.stringify(item)]
  * 数组去重就是比较值与类型是否都相等(即===全等)
  * 利用值与类型是否都相等，使用 typeof item 类型 + item值 组成一个字符串
- * obj.hasOwnProperty(typeof item + item) === true
+ * 通用的数组去重
  */
 function removeDeplicates(arr) {
   let obj = {};
   return arr.filter((item) => {
-    // obj.hasOwnProperty(typeof item + item) === true
-    if (obj[typeof item + item]) {
+    if (obj[typeof item + JSON.stringify(item)]) {
       return false;
     } else {
-      obj[typeof item + item] = true;
+      obj[typeof item + JSON.stringify(item)] = true;
       return true;
     }
   });
@@ -79,7 +78,7 @@ function forDeplicates(data) {
       j--;
     }
   }
-  return data
+  return data;
 }
 const deplicates3 = forDeplicates(arr);
 console.log("方法3 ->", deplicates3);
@@ -89,30 +88,31 @@ console.log("方法3 ->", deplicates3);
  * 不能去null，undefined和引用类型数据
  */
 function indexOfDeplicates(data) {
-    const result = []
-    for (let item of data) {
-      if(result.indexOf(item) === -1){
-        result.push(item)
-      }
+  const result = [];
+  for (let item of data) {
+    if (result.indexOf(item) === -1) {
+      result.push(item);
     }
-    return data
   }
-  const deplicates4 = indexOfDeplicates(arr);
-  console.log("方法4 ->", deplicates4);
+  return data;
+}
+const deplicates4 = indexOfDeplicates(arr);
+console.log("方法4 ->", deplicates4);
 
-  /**
-   * 方法5
-   * reduce + indexOf/includes
-   * 和[...new Set(arr)] 方法一除了不能去除引用类型数据，唯一的不同就是不能去除NaN
-   * 缺点：不能去除引用类型数据和NaN，但可去除基本类型数据包括null,undefined
-   */
-  function reduceDuplicate(arr){
-    return arr.reduce((acc, val)=>{
-        if(acc.indexOf(val) === -1){ //!acc.includes(val)
-            acc.push(val)
-        }
-        return acc
-    },[])
-} 
+/**
+ * 方法5
+ * reduce + indexOf/includes
+ * 和[...new Set(arr)] 方法一除了不能去除引用类型数据，唯一的不同就是不能去除NaN
+ * 缺点：不能去除引用类型数据和NaN，但可去除基本类型数据包括null,undefined
+ */
+function reduceDuplicate(arr) {
+  return arr.reduce((acc, val) => {
+    if (acc.indexOf(val) === -1) {
+      //!acc.includes(val)
+      acc.push(val);
+    }
+    return acc;
+  }, []);
+}
 
 console.log("方法5 ->", reduceDuplicate(arr));
