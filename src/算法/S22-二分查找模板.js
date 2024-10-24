@@ -49,7 +49,7 @@ var left_bound = function (nums, target) {
   if (left < 0 || left >= nums.length) {
     return -1;
   }
-  return nums[left] == target ? left : -1;;
+  return nums[left] == target ? left : -1;
 };
 
 /**

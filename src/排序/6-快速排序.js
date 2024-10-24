@@ -34,7 +34,7 @@
  * @param {*} right
  * @returns
  */
-const quickSort = function (arr, left, right) {
+var quickSort = function (arr, left, right) {
   const len = arr.length;
   left = typeof left === "number" ? left : 0;
   right = typeof right === "number" ? right : len - 1;
@@ -60,7 +60,7 @@ const quickSort = function (arr, left, right) {
  * @param {*} arr
  * @returns
  */
-const quickSort = function (arr) {
+var quickSort = function (arr) {
   if (arr.length <= 1) {
     return arr;
   }

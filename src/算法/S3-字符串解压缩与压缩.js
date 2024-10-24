@@ -16,6 +16,9 @@
  * 方法一
  * 
  * 递归处理嵌套的压缩模式
+ * 
+ * (\d+)：这是一个捕获组，用于匹配一个或多个数字（\d 表示数字，+ 表示一个或多个）。这个捕获组会捕获数字序列，例如 123。
+ * ([^\[\]]+)：这是第二个捕获组，用于匹配并捕获一个或多个不是方括号的字符。这里的 ^ 表示“非”，[] 表示字符集，\[\] 表示字面意义上的方括号。所以，这个捕获组会匹配任何不是 [ 或 ] 的字符序列。
  * @param {*} str 
  * @returns 
  */
@@ -53,6 +56,38 @@ function convertString(str) {
 
   return result;
 }
+
+/**
+ * 方法三 
+ * 
+ * 利用栈
+ * @param {*} s 
+ * @returns 
+ */
+const convertString = (s) => {
+  let stack = [];
+
+  for (let i = 0; i < s.length; i++) {
+    if (s.charAt(i) !== ']') {
+      stack.push(s.charAt(i));
+    } else if (s.charAt(i) === ']') {
+      let curStr = stack.pop()
+      let group = ''
+      while (curStr !== '[') {
+        group += curStr
+        curStr = stack.pop()
+      }
+      stack.push(group.split('').reverse().join('').repeat(stack.pop()))
+      
+    }
+  }
+
+  return stack.join('')
+}
+
+console.log(convertString('3[x]2[y0.%&]')); // 返回'xxxy0.%&y0.%&'
+console.log(convertString('3[x2[y]]')); // 返回'xyyxyyxyy'
+console.log(convertString('2[xyz]3[ab]cd')); // 返回'xyzxyzabababcd'
 
 /**
  * 压缩
