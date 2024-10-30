@@ -39,3 +39,20 @@ const sortedVersions = sortVersion(versions);
 console.log(sortedVersions);
 // 输出: ['1.0.0', '1.1.0', '1.2.3-alpha', '1.2.3-beta', '1.2.3', '1.2.4', '2.0.0']
 
+
+var compareVersion = function (versions) {
+  return versions.sort((version1, version2) => {
+    let s1 = version1.split('.').map(Number)
+    let s2 = version2.split('.').map(Number)
+
+    for (let i = 0; i < s1.length || i < s2.length; i++) {
+      const v1 = s1[i] || 0
+      const v2 = s2[i] || 0
+      if (v1 !== v2) {
+        return v1 - v2;
+      }
+    }
+
+    return version1.localeCompare(version2)
+  })
+}
